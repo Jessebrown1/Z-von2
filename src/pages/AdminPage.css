@@ -1,0 +1,142 @@
+.admin-page {
+  padding: calc(var(--nav-height) + var(--space-8)) var(--gutter) var(--space-10);
+  min-height: 100vh;
+  background: var(--bg-primary);
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+}
+
+.admin-page-header {
+  margin-bottom: var(--space-7);
+}
+
+.admin-page-header h1 {
+  font-weight: 400;
+  font-size: var(--fs-h2);
+  margin-top: var(--space-3);
+}
+
+.admin-tabs {
+  display: flex;
+  gap: var(--space-6);
+  border-bottom: var(--border-hairline);
+  margin-bottom: var(--space-8);
+}
+
+.admin-tab {
+  padding-bottom: var(--space-4);
+  font-size: var(--fs-small);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  border-bottom: 1px solid transparent;
+  transition: color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out);
+}
+
+.admin-tab:hover {
+  color: var(--text-primary);
+}
+
+.admin-tab.is-active {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.admin-loading,
+.admin-empty,
+.admin-error {
+  font-size: var(--fs-small);
+  color: var(--text-secondary);
+}
+
+.admin-error {
+  color: var(--color-error);
+  background: rgba(209, 106, 90, 0.1);
+  border: 1px solid rgba(209, 106, 90, 0.35);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-5);
+}
+
+/* Shared field styles reused by AdminOrders/AdminProducts/ProductForm */
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.admin-field span,
+.admin-field-label {
+  font-size: var(--fs-micro);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  display: block;
+  margin-bottom: var(--space-2);
+}
+
+.admin-field input,
+.admin-field select,
+.admin-field textarea {
+  background: var(--bg-surface);
+  border: var(--border-hairline);
+  padding: var(--space-3) var(--space-4);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: var(--fs-body);
+}
+
+.admin-field input:focus,
+.admin-field select:focus,
+.admin-field textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.admin-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.admin-field-row--checks {
+  align-items: center;
+}
+
+.admin-field--inline {
+  margin-bottom: 0;
+}
+
+.admin-checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-small);
+  color: var(--text-secondary);
+}
+
+.admin-submit {
+  background: var(--accent);
+  color: var(--color-black);
+  padding: var(--space-4) var(--space-7);
+  font-size: var(--fs-small);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  transition: background var(--duration-base) var(--ease-out);
+}
+
+.admin-submit:hover:not(:disabled) {
+  background: var(--accent-bright);
+}
+
+.admin-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 720px) {
+  .admin-field-row {
+    grid-template-columns: 1fr;
+  }
+}

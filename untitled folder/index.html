@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZÉVON — Fearless Streetwear</title>
+  <meta name="description" content="ZÉVON. Crafted for the fearless. A limited edition premium streetwear collection." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="preloader">
+    <div class="preloader-mark">ZÉVON</div>
+    <div class="preloader-bar"><div class="preloader-bar-fill"></div></div>
+  </div>
+
+  <div id="grain"></div>
+
+  <nav id="site-nav">
+    <span class="nav-mark">ZÉVON</span>
+    <span class="nav-tag">No. 001 — Fearless Collection</span>
+  </nav>
+
+  <main id="app">
+
+    <!-- HERO — pinned canvas scroll-scrub -->
+    <section id="hero" class="section">
+      <canvas id="hero-canvas"></canvas>
+      <div class="hero-vignette"></div>
+      <div class="hero-content">
+        <h1 class="hero-mark" aria-label="ZÉVON">
+          <span>Z</span><span>É</span><span>V</span><span>O</span><span>N</span>
+        </h1>
+        <p class="hero-sub">Premium streetwear. Made for the fearless.</p>
+      </div>
+      <div class="scroll-cue">
+        <span></span>
+        <p>Scroll</p>
+      </div>
+    </section>
+
+    <!-- STORY -->
+    <section id="story" class="section">
+      <div class="story-inner">
+        <p class="story-eyebrow">The Manifesto</p>
+        <h2 class="story-line">Crafted<br/>for the<br/><em>Fearless</em>.</h2>
+      </div>
+    </section>
+
+    <!-- MACRO DETAIL — scroll-scrubbed video -->
+    <section id="macro" class="section">
+      <video id="macro-video" muted playsinline preload="auto" poster="/video/macro-poster.jpg">
+        <source src="/video/macro.mp4" type="video/mp4" />
+      </video>
+      <div class="hero-vignette macro-vignette"></div>
+      <div class="macro-callouts">
+        <div class="callout" data-range="0,0.34">
+          <span class="callout-index">01</span>
+          <p>Fabric, felt<br/>before it's seen.</p>
+        </div>
+        <div class="callout" data-range="0.33,0.67">
+          <span class="callout-index">02</span>
+          <p>Every seam,<br/>deliberate.</p>
+        </div>
+        <div class="callout" data-range="0.66,1">
+          <span class="callout-index">03</span>
+          <p>Gold, where<br/>it matters.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CRAFTSMANSHIP — feature callouts -->
+    <section id="craft" class="section">
+      <div class="craft-bg" style="background-image:url('/hero.png')"></div>
+      <div class="craft-inner">
+        <p class="craft-eyebrow">Design &amp; Craftsmanship</p>
+        <ul class="craft-list">
+          <li class="craft-item">
+            <span class="craft-num">01</span>
+            <h3>Premium Materials</h3>
+            <p>Sourced, not settled for.</p>
+          </li>
+          <li class="craft-item">
+            <span class="craft-num">02</span>
+            <h3>Limited Production</h3>
+            <p>Few pieces. No repeats.</p>
+          </li>
+          <li class="craft-item">
+            <span class="craft-num">03</span>
+            <h3>Handcrafted Details</h3>
+            <p>Made by hand, worn with intent.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- EXPLODED ASSEMBLY -->
+    <section id="assembly" class="section">
+      <div class="assembly-stage">
+        <img class="assembly-final" src="/hero.png" alt="ZÉVON garment" />
+        <div class="assembly-frag frag-1"></div>
+        <div class="assembly-frag frag-2"></div>
+        <div class="assembly-frag frag-3"></div>
+        <div class="assembly-frag frag-4"></div>
+        <div class="assembly-frag frag-5"></div>
+        <div class="assembly-frag frag-6 label-frag">ZÉVON</div>
+      </div>
+      <div class="assembly-text">
+        <p class="assembly-eyebrow">Construction</p>
+        <h2>Built in layers.<br/>Worn as one.</h2>
+      </div>
+    </section>
+
+    <!-- LIMITED EDITION -->
+    <section id="edition" class="section">
+      <div class="edition-image">
+        <img src="/hero.png" alt="ZÉVON limited edition piece" />
+      </div>
+      <div class="edition-content">
+        <p class="edition-eyebrow">Limited Edition</p>
+        <h2>The Fearless<br/>Collection.</h2>
+        <p class="edition-count"><span id="edition-num">001</span> / 500</p>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section id="cta" class="section">
+      <div class="cta-inner">
+        <p class="cta-eyebrow">By Invitation</p>
+        <h2>Enter the<br/>Collection.</h2>
+        <button class="cta-button" type="button">Request Access</button>
+      </div>
+      <footer class="site-footer">
+        <span>ZÉVON</span>
+        <span>&copy; 2026. All rights reserved.</span>
+      </footer>
+    </section>
+
+  </main>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

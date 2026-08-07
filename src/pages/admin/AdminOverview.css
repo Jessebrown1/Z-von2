@@ -1,0 +1,124 @@
+.admin-overview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.admin-overview-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+}
+
+.admin-overview-stat {
+  padding: var(--space-5);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.admin-overview-stat-value {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 28px;
+  color: var(--accent-bright);
+  white-space: nowrap;
+}
+
+.admin-overview-stat-label {
+  font-size: var(--fs-micro);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.admin-overview-panel {
+  padding: var(--space-6);
+  border-radius: var(--radius-md);
+}
+
+.admin-overview-panel h3 {
+  font-weight: 400;
+  font-size: 20px;
+  margin-bottom: var(--space-5);
+  color: var(--text-primary);
+}
+
+.admin-trend-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+  height: 160px;
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+}
+
+.admin-trend-bar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  height: 100%;
+  min-width: 28px;
+  flex: 1 0 auto;
+}
+
+.admin-trend-bar {
+  width: 100%;
+  max-width: 28px;
+  background: linear-gradient(180deg, var(--accent-bright), var(--accent-dim));
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  min-height: 4px;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.admin-trend-bar:hover {
+  opacity: 0.8;
+}
+
+.admin-trend-label {
+  font-size: var(--fs-micro);
+  letter-spacing: var(--tracking-normal);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.admin-top-products {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.admin-top-products li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) 0;
+  border-bottom: var(--border-hairline);
+  font-size: var(--fs-small);
+}
+
+.admin-top-products li:last-child {
+  border-bottom: none;
+}
+
+.admin-top-product-name {
+  color: var(--text-primary);
+}
+
+.admin-top-product-qty {
+  color: var(--accent);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  font-size: var(--fs-micro);
+}
+
+@media (max-width: 720px) {
+  .admin-overview-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .admin-overview-stat-value {
+    font-size: 22px;
+  }
+}

@@ -1,0 +1,91 @@
+.certificates-page {
+  padding: calc(var(--nav-height) + var(--space-8)) var(--gutter) var(--space-10);
+  min-height: 100vh;
+  background: var(--bg-primary);
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+}
+
+.certificates-page h1 {
+  font-weight: 400;
+  font-size: var(--fs-h2);
+  margin-top: var(--space-3);
+  margin-bottom: var(--space-8);
+}
+
+.certificates-page--empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--space-5);
+}
+
+.certificates-page--empty h1 {
+  margin-bottom: 0;
+}
+
+.certificates-page--empty p {
+  color: var(--text-secondary);
+}
+
+.certificates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-5);
+}
+
+.certificate-tile {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: transform var(--duration-base) var(--ease-out), box-shadow var(--duration-base) var(--ease-out);
+}
+
+.certificate-tile:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.certificate-tile-image {
+  aspect-ratio: 1;
+  overflow: hidden;
+}
+
+.certificate-tile-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.certificate-tile-info {
+  padding: var(--space-4) var(--space-5) var(--space-5);
+}
+
+.certificate-tile-drop {
+  font-size: var(--fs-micro);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.certificate-tile-name {
+  margin-top: var(--space-2);
+  font-size: 18px;
+  color: var(--text-primary);
+}
+
+.certificate-tile-edition {
+  margin-top: var(--space-2);
+  font-size: var(--fs-small);
+  color: var(--accent);
+  letter-spacing: var(--tracking-normal);
+}
+
+.certificate-tile-date {
+  margin-top: var(--space-1);
+  font-size: var(--fs-micro);
+  color: var(--text-secondary);
+}

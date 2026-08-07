@@ -1,0 +1,108 @@
+.admin-orders-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.admin-stat {
+  padding: var(--space-5);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.admin-stat-value {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 32px;
+  color: var(--accent-bright);
+}
+
+.admin-stat-label {
+  font-size: var(--fs-micro);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.admin-orders-table {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.admin-order-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-6);
+  padding: var(--space-5) var(--space-6);
+  border-radius: var(--radius-md);
+}
+
+.admin-order-ref {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  color: var(--text-primary);
+}
+
+.admin-order-meta {
+  margin-top: var(--space-1);
+  font-size: var(--fs-small);
+  color: var(--text-secondary);
+}
+
+.admin-order-items {
+  margin-top: var(--space-3);
+  font-size: var(--fs-small);
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.admin-order-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.admin-order-total {
+  font-size: var(--fs-body-lg);
+  color: var(--text-primary);
+}
+
+.admin-order-advance {
+  margin-top: var(--space-2);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--accent);
+  border-bottom: 1px solid var(--accent-dim);
+  padding-bottom: 2px;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.admin-order-advance:hover:not(:disabled) {
+  color: var(--accent-bright);
+}
+
+.admin-order-advance:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 720px) {
+  .admin-orders-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .admin-order-row {
+    flex-direction: column;
+  }
+
+  .admin-order-side {
+    align-items: flex-start;
+  }
+}

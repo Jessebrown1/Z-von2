@@ -1,0 +1,91 @@
+/*
+  Shared keyframes. GSAP handles scroll-driven motion (see hooks/animationHooks.js);
+  this file only holds CSS-native loops and simple transitions reused across components.
+*/
+
+@keyframes scrollDrip {
+  0% {
+    top: -100%;
+  }
+  60% {
+    top: 100%;
+  }
+  100% {
+    top: 100%;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* Drifting gold dust — used by the homepage's cinematic intro and the auth pages. */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent-bright), transparent 70%);
+  animation-name: particleDrift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+@keyframes particleDrift {
+  from {
+    transform: translate(0, 0);
+    opacity: 0.25;
+  }
+  to {
+    transform: translate(14px, -20px);
+    opacity: 0.9;
+  }
+}
+
+/* Gold-foil text shimmer — used by the cinematic intro's logo and the auth-page wordmark. */
+.metallic-gold-text {
+  display: inline-block;
+  background: linear-gradient(100deg, #7a6537 0%, #e8c98a 25%, #fff6df 45%, #c9a961 60%, #7a6537 85%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: metallicShimmer 6s linear infinite;
+}
+
+@keyframes metallicShimmer {
+  to {
+    background-position: -250% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

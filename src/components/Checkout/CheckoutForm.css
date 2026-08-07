@@ -1,0 +1,116 @@
+.checkout-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+}
+
+.checkout-form-section h3 {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 20px;
+  letter-spacing: var(--tracking-normal);
+  color: var(--accent);
+  margin-bottom: var(--space-4);
+}
+
+.checkout-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  position: relative;
+}
+
+.checkout-field span {
+  font-size: var(--fs-micro);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.checkout-field input,
+.checkout-field select,
+.checkout-field textarea {
+  background: var(--bg-surface);
+  border: var(--border-hairline);
+  padding: var(--space-3) var(--space-4);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: var(--fs-body);
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.checkout-field textarea {
+  resize: vertical;
+  min-height: 72px;
+}
+
+.checkout-field input:focus,
+.checkout-field select:focus,
+.checkout-field textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.checkout-field input::placeholder,
+.checkout-field textarea::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+.checkout-field em {
+  font-style: normal;
+  font-size: 11px;
+  color: var(--color-error);
+}
+
+.checkout-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.checkout-field-row--three {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.checkout-payment-note {
+  font-size: var(--fs-small);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.checkout-form-error {
+  font-size: var(--fs-small);
+  color: var(--color-error);
+  background: rgba(209, 106, 90, 0.1);
+  border: 1px solid rgba(209, 106, 90, 0.35);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+}
+
+.checkout-submit {
+  background: var(--accent);
+  color: var(--color-black);
+  padding: var(--space-4);
+  font-size: var(--fs-small);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  transition: background var(--duration-base) var(--ease-out);
+}
+
+.checkout-submit:hover:not(:disabled) {
+  background: var(--accent-bright);
+}
+
+.checkout-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .checkout-field-row,
+  .checkout-field-row--three {
+    grid-template-columns: 1fr;
+  }
+}

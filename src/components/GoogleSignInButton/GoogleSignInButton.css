@@ -1,0 +1,34 @@
+.google-signin {
+  margin-top: var(--space-6);
+}
+
+.google-signin-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.google-signin-divider::before,
+.google-signin-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--glass-border);
+}
+
+.google-signin-divider span {
+  font-size: var(--fs-micro);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.google-signin-btn {
+  display: flex;
+  justify-content: center;
+}
+
+.google-signin-btn iframe {
+  border-radius: var(--radius-pill) !important;
+}

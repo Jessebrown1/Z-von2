@@ -1,0 +1,105 @@
+.product-form {
+  max-width: 900px;
+}
+
+.product-form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-7);
+}
+
+.product-form-header h2 {
+  font-weight: 400;
+  font-size: var(--fs-h3);
+}
+
+.product-form-cancel {
+  font-size: var(--fs-small);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.product-form-cancel:hover {
+  color: var(--accent);
+}
+
+.product-form-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: var(--space-8);
+  margin-bottom: var(--space-6);
+}
+
+.product-form-image-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+.product-form-image {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--bg-surface);
+}
+
+.product-form-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-form-image button {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(5, 5, 5, 0.7);
+  color: #fff;
+  font-size: 14px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-form-image-upload {
+  aspect-ratio: 1;
+  border: var(--border-gold);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-small);
+  color: var(--accent);
+  cursor: pointer;
+  text-align: center;
+  padding: var(--space-3);
+  transition: background var(--duration-fast) var(--ease-out);
+}
+
+.product-form-image-upload:hover {
+  background: rgba(201, 169, 97, 0.08);
+}
+
+.product-form-dna-heading {
+  margin-top: var(--space-5);
+}
+
+.product-form-dna-hint {
+  font-size: var(--fs-micro);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-4);
+}
+
+@media (max-width: 720px) {
+  .product-form-grid {
+    grid-template-columns: 1fr;
+  }
+}

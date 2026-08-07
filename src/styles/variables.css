@@ -1,0 +1,144 @@
+/*
+  ZÉVON design tokens.
+  Change brand colors, type, spacing, timing, shadows and borders here —
+  every component and section reads from these variables, nothing is hardcoded.
+*/
+:root {
+  color-scheme: dark;
+
+  /* ---- Brand colors ---- */
+  --color-black: #050505;
+  --color-off-black: #0a0a0a;
+  --color-ink: #e9e5dd;
+  --color-ink-dim: #8a8579;
+  --color-gold: #c9a961;
+  --color-gold-bright: #e8c98a;
+  --color-gold-dim: #7a6537;
+  --color-error: #d16a5a;
+  --color-success: #7fae7a;
+
+  /* Semantic aliases used across components */
+  --bg-primary: var(--color-off-black);
+  --bg-surface: var(--color-black);
+  --text-primary: var(--color-ink);
+  --text-secondary: var(--color-ink-dim);
+  --accent: var(--color-gold);
+  --accent-bright: var(--color-gold-bright);
+  --accent-dim: var(--color-gold-dim);
+
+  /* ---- Typography ---- */
+  --font-serif: 'Cormorant Garamond', 'Times New Roman', serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --fs-display: clamp(56px, 12vw, 160px);
+  --fs-h1: clamp(40px, 8vw, 100px);
+  --fs-h2: clamp(32px, 5vw, 64px);
+  --fs-h3: clamp(22px, 3.2vw, 36px);
+  --fs-body-lg: clamp(16px, 1.4vw, 18px);
+  --fs-body: 14px;
+  --fs-small: 12px;
+  --fs-micro: 10px;
+
+  --tracking-tight: 0em;
+  --tracking-normal: 0.02em;
+  --tracking-wide: 0.12em;
+  --tracking-wider: 0.2em;
+  --tracking-widest: 0.3em;
+
+  /* ---- Spacing scale (4px base) ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 128px;
+
+  --gutter: 5vw;
+
+  /* ---- Animation timing ---- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 0.25s;
+  --duration-base: 0.4s;
+  --duration-slow: 0.8s;
+  --duration-slower: 1.1s;
+  --scrub-hero: 0.4;
+  --scrub-soft: 0.3;
+
+  /* ---- Shadows ---- */
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 30px 60px rgba(0, 0, 0, 0.6);
+  --shadow-gold-glow: 0 0 24px rgba(201, 169, 97, 0.25);
+
+  /* ---- Borders ---- */
+  --border-hairline: 1px solid rgba(201, 169, 97, 0.15);
+  --border-gold: 1px solid rgba(201, 169, 97, 0.55);
+  --radius-sm: 2px;
+  --radius-md: 6px;
+  --radius-pill: 999px;
+
+  /* ---- Z-index scale ---- */
+  --z-base: 1;
+  --z-nav: 200;
+  --z-drawer: 500;
+  --z-transition: 800;
+  --z-preloader: 1000;
+  --z-grain: 999;
+
+  /* ---- Layout ---- */
+  --nav-height: 84px;
+  --max-content-width: 1440px;
+
+  /* ---- Liquid Glass ---- */
+  --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03));
+  --glass-bg-strong: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.05));
+  --glass-border: rgba(255, 255, 255, 0.16);
+  --glass-border-gold: rgba(201, 169, 97, 0.4);
+  --glass-highlight: rgba(255, 255, 255, 0.55);
+  --glass-blur: 18px;
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+  /* Neutral low-contrast fill for surfaces recessed within a glass panel
+     (chat bubbles, recommendation cards) — flips per theme below. */
+  --surface-subtle: rgba(255, 255, 255, 0.06);
+  --surface-subtle-border: rgba(255, 255, 255, 0.08);
+}
+
+/*
+  Light mode. Toggled by setting data-theme="light" on <html> (see
+  ThemeContext). Only the tokens that actually need to flip are redeclared —
+  gold accents, spacing, type and timing stay identical in both themes so the
+  brand reads the same either way.
+*/
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --bg-primary: #f6f3ec;
+  --bg-surface: #ffffff;
+  --text-primary: #1c1913;
+  --text-secondary: #6f6a5c;
+  --accent-dim: #a98a4c;
+
+  --shadow-sm: 0 4px 12px rgba(28, 25, 19, 0.08);
+  --shadow-md: 0 12px 32px rgba(28, 25, 19, 0.1);
+  --shadow-lg: 0 30px 60px rgba(28, 25, 19, 0.16);
+  --shadow-gold-glow: 0 0 24px rgba(201, 169, 97, 0.2);
+
+  --border-hairline: 1px solid rgba(28, 25, 19, 0.1);
+  --border-gold: 1px solid rgba(169, 138, 76, 0.55);
+
+  --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.35));
+  --glass-bg-strong: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.5));
+  --glass-border: rgba(28, 25, 19, 0.1);
+  --glass-border-gold: rgba(169, 138, 76, 0.45);
+  --glass-highlight: rgba(255, 255, 255, 0.9);
+  --glass-shadow: 0 8px 32px rgba(28, 25, 19, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+
+  --surface-subtle: rgba(28, 25, 19, 0.045);
+  --surface-subtle-border: rgba(28, 25, 19, 0.09);
+}

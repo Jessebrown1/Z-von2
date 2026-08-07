@@ -1,0 +1,212 @@
+.certificate-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--nav-height) + var(--space-7)) var(--gutter) var(--space-9);
+  background: radial-gradient(ellipse at 50% 20%, rgba(201, 169, 97, 0.08), transparent 60%), var(--bg-primary);
+}
+
+.certificate-page--empty {
+  flex-direction: column;
+  gap: var(--space-4);
+  text-align: center;
+}
+
+.certificate-page--empty h1 {
+  font-weight: 400;
+  font-size: var(--fs-h3);
+}
+
+.certificate-card {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  padding: var(--space-8) var(--space-6) var(--space-7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  border-radius: var(--radius-md);
+  box-shadow: var(--glass-shadow), var(--shadow-lg);
+}
+
+/* Double hairline frame — the outer line sits just inside the card edge,
+   the inner one a few px further in, so it reads as an engraved border
+   rather than a plain box. */
+.certificate-card::before,
+.certificate-card::after {
+  content: '';
+  position: absolute;
+  border: 1px solid rgba(201, 169, 97, 0.45);
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+}
+
+.certificate-card::before {
+  inset: 10px;
+}
+
+.certificate-card::after {
+  inset: 14px;
+  border-color: rgba(201, 169, 97, 0.2);
+}
+
+.certificate-seal {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(8deg);
+  color: var(--accent);
+  font-size: 7px;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  line-height: 1.6;
+  background: radial-gradient(circle, rgba(201, 169, 97, 0.12), transparent 70%);
+}
+
+.certificate-header {
+  margin-bottom: var(--space-5);
+}
+
+.certificate-mark {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  letter-spacing: var(--tracking-widest);
+  color: var(--text-primary);
+}
+
+.certificate-mark-sub {
+  margin-top: 2px;
+  font-size: var(--fs-micro);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.certificate-image {
+  width: 140px;
+  height: 140px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-bottom: var(--space-5);
+  border: var(--border-hairline);
+}
+
+.certificate-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.certificate-drop {
+  font-size: var(--fs-micro);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.certificate-product {
+  margin-top: var(--space-2);
+  font-weight: 400;
+  font-size: clamp(24px, 4vw, 32px);
+  color: var(--text-primary);
+}
+
+.certificate-variant {
+  margin-top: var(--space-2);
+  font-size: var(--fs-small);
+  letter-spacing: var(--tracking-wider);
+  color: var(--text-secondary);
+}
+
+.certificate-edition {
+  margin-top: var(--space-6);
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.certificate-edition-number {
+  font-family: var(--font-serif);
+  font-size: 44px;
+  color: var(--accent-bright);
+  letter-spacing: 0.02em;
+}
+
+.certificate-edition-of {
+  font-size: var(--fs-small);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.certificate-divider {
+  width: 48px;
+  height: 1px;
+  margin: var(--space-6) 0;
+  background: var(--accent-dim);
+}
+
+.certificate-details {
+  display: flex;
+  gap: var(--space-8);
+}
+
+.certificate-details dt {
+  font-size: var(--fs-micro);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-1);
+}
+
+.certificate-details dd {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  color: var(--text-primary);
+}
+
+.certificate-qr {
+  margin-top: var(--space-7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.certificate-qr img {
+  width: 96px;
+  height: 96px;
+  padding: var(--space-2);
+  background: var(--color-ink);
+  border-radius: var(--radius-sm);
+}
+
+.certificate-qr p {
+  font-size: var(--fs-micro);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 480px) {
+  .certificate-card {
+    padding: var(--space-7) var(--space-4) var(--space-6);
+  }
+
+  .certificate-details {
+    gap: var(--space-6);
+  }
+}

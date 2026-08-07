@@ -1,0 +1,25 @@
+.qty-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-5);
+  border: var(--border-hairline);
+  padding: var(--space-3) var(--space-5);
+  width: fit-content;
+}
+
+.qty-stepper button {
+  font-size: 16px;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.qty-stepper button:disabled {
+  color: var(--text-secondary);
+  cursor: not-allowed;
+}
+
+.qty-stepper span {
+  min-width: 16px;
+  text-align: center;
+  font-size: var(--fs-body);
+}
