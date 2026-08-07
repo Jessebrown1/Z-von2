@@ -32,11 +32,12 @@ function addTagWeights(tally, tags, weight) {
  * Turns a customer's purchases, wishlist, recent views and mood picks into
  * a weighted style profile — never fabricated for a customer with no signal.
  */
-export function computeStyleDna(userId) {
-  const orders = getOrdersByUser(userId).filter((o) => o.status === 'paid' || o.status === 'completed');
-  const wishlistIds = getWishlistProductIds(userId);
-  const views = getRecentProductViews(userId, 50);
-  const moods = getRecentMoodSelections(userId, 20);
+export async function computeStyleDna(userId) {
+  const allOrders = await getOrdersByUser(userId);
+  const orders = allOrders.filter((o) => o.status === 'paid' || o.status === 'completed');
+  const wishlistIds = await getWishlistProductIds(userId);
+  const views = await getRecentProductViews(userId, 50);
+  const moods = await getRecentMoodSelections(userId, 20);
 
   const purchasedIds = new Set();
   for (const order of orders) {
@@ -48,8 +49,8 @@ export function computeStyleDna(userId) {
   const colorTally = {};
   const weightSamples = [];
 
-  const applyProduct = (productId, weight) => {
-    const product = getProductById(productId);
+  const applyProduct = async (productId, weight) => {
+    const product = await getProductById(productId);
     if (!product) return;
     addTagWeights(moodTally, product.moodTags, weight);
     if (product.silhouette) silhouetteTally[product.silhouette] = (silhouetteTally[product.silhouette] || 0) + weight;
@@ -57,9 +58,9 @@ export function computeStyleDna(userId) {
     if (product.weightGsm) weightSamples.push(product.weightGsm);
   };
 
-  for (const id of purchasedIds) applyProduct(id, PURCHASE_WEIGHT);
-  for (const id of wishlistIds) applyProduct(id, WISHLIST_WEIGHT);
-  for (const view of views) applyProduct(view.product_id, VIEW_WEIGHT);
+  for (const id of purchasedIds) await applyProduct(id, PURCHASE_WEIGHT);
+  for (const id of wishlistIds) await applyProduct(id, WISHLIST_WEIGHT);
+  for (const view of views) await applyProduct(view.product_id, VIEW_WEIGHT);
   for (const m of moods) moodTally[m.mood] = (moodTally[m.mood] || 0) + MOOD_SELECTION_WEIGHT;
 
   const interactedProductIds = [...new Set([...purchasedIds, ...wishlistIds, ...views.map((v) => v.product_id)])];
@@ -109,10 +110,11 @@ export function computeStyleDna(userId) {
  * into a mood outside their top two, with a stated reason it still fits.
  * Never recommends something already purchased, wishlisted or recently viewed.
  */
-export function recommendForStyleDna(userId, limit = 4) {
-  const dna = computeStyleDna(userId);
+export async function recommendForStyleDna(userId, limit = 4) {
+  const dna = await computeStyleDna(userId);
   const interacted = new Set(dna.interactedProductIds);
-  const candidates = listProducts().filter((p) => !interacted.has(p.id));
+  const allProducts = await listProducts();
+  const candidates = allProducts.filter((p) => !interacted.has(p.id));
 
   if (!dna.hasSignal) {
     return { recommendations: candidates.slice(0, limit), stretchPick: null, dna };

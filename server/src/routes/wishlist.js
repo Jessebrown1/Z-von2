@@ -6,23 +6,34 @@ import { getProductById } from '../store/products.js';
 const router = Router();
 router.use(requireAuth);
 
-router.get('/', (req, res) => {
-  const products = getWishlistProductIds(req.userId)
-    .map((id) => getProductById(id))
-    .filter(Boolean);
-  res.json({ products });
+router.get('/', async (req, res) => {
+  try {
+    const ids = await getWishlistProductIds(req.userId);
+    const products = (await Promise.all(ids.map((id) => getProductById(id)))).filter(Boolean);
+    res.json({ products });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-router.post('/:productId', (req, res) => {
-  const product = getProductById(req.params.productId);
-  if (!product) return res.status(404).json({ error: 'Product not found' });
-  addToWishlist(req.userId, req.params.productId);
-  res.status(201).json({ ok: true });
+router.post('/:productId', async (req, res) => {
+  try {
+    const product = await getProductById(req.params.productId);
+    if (!product) return res.status(404).json({ error: 'Product not found' });
+    await addToWishlist(req.userId, req.params.productId);
+    res.status(201).json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-router.delete('/:productId', (req, res) => {
-  removeFromWishlist(req.userId, req.params.productId);
-  res.status(204).end();
+router.delete('/:productId', async (req, res) => {
+  try {
+    await removeFromWishlist(req.userId, req.params.productId);
+    res.status(204).end();
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 export default router;

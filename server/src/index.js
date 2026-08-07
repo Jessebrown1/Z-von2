@@ -2,9 +2,6 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import path from 'node:path';
-import fs from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import paymentsRouter from './routes/payments.js';
 import authRouter from './routes/auth.js';
 import ordersRouter from './routes/orders.js';
@@ -14,32 +11,46 @@ import certificatesRouter from './routes/certificates.js';
 import wishlistRouter from './routes/wishlist.js';
 import interactionsRouter from './routes/interactions.js';
 import styleDnaRouter from './routes/styledna.js';
-import './db.js';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const UPLOAD_DIR = path.join(__dirname, '..', 'uploads');
-fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+import './db.js'; // has top-level await — this import blocks until schema/seed/migrations finish
 
 const app = express();
-const PORT = process.env.API_PORT || 4000;
+// API_PORT wins first — local dev tooling (this project's own preview
+// server, some editors) sets a generic PORT env var for the frontend that
+// gets inherited by every child process under `concurrently`, which would
+// otherwise steal this server's port too. Render only ever sets PORT (no
+// API_PORT), so production still picks it up via the second fallback.
+const PORT = process.env.API_PORT || process.env.PORT || 4000;
+const isProduction = process.env.NODE_ENV === 'production';
 
 const secretKey = process.env.PAYSTACK_SECRET_KEY || '';
 const isPlaceholderKey = !secretKey || secretKey.includes('xxxx');
 const hasJwtSecret = Boolean(process.env.JWT_SECRET);
 const hasGoogleClientId = Boolean(process.env.GOOGLE_CLIENT_ID);
+const hasTurso = Boolean(process.env.TURSO_DATABASE_URL);
+const hasCloudinary = Boolean(process.env.CLOUDINARY_CLOUD_NAME);
+
+// Behind Render's reverse proxy, this makes req.secure/req.protocol reflect
+// the original client request rather than the internal proxy hop.
+if (isProduction) app.set('trust proxy', 1);
+
+// FRONTEND_ORIGIN can be a comma-separated list — useful for allowing both
+// your production Vercel domain and its preview deployments at once.
+const allowedOrigins = (process.env.FRONTEND_ORIGIN || 'http://localhost:5173')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
 
 app.use(
   cors({
-    // The dev frontend talks to this API through Vite's /api proxy, so
-    // requests are same-origin from the browser's point of view and this
-    // mostly matters for direct API access (Postman, a future separately-
-    // hosted frontend, etc).
-    origin: process.env.FRONTEND_ORIGIN || 'http://localhost:5173',
+    origin(origin, callback) {
+      // No Origin header (curl, server-to-server, same-origin) — allow.
+      if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+      callback(new Error('Not allowed by CORS'));
+    },
     credentials: true,
   })
 );
 app.use(cookieParser());
-app.use('/uploads', express.static(UPLOAD_DIR));
 
 app.use('/api/auth', authRouter);
 app.use('/api/orders', ordersRouter);
@@ -57,7 +68,18 @@ app.get('/api/health', (req, res) => {
     paystackConfigured: !isPlaceholderKey,
     authConfigured: hasJwtSecret,
     googleConfigured: hasGoogleClientId,
+    databaseConfigured: hasTurso,
+    imageUploadsConfigured: hasCloudinary,
   });
+});
+
+// Safety net — every route above already catches its own errors, but this
+// stops anything that slips through from hanging the request forever.
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  console.error(err);
+  if (res.headersSent) return;
+  res.status(500).json({ error: 'Internal server error' });
 });
 
 app.listen(PORT, () => {
@@ -74,5 +96,11 @@ app.listen(PORT, () => {
   }
   if (!hasGoogleClientId) {
     console.warn('⚠ GOOGLE_CLIENT_ID is not set in server/.env — "Sign in with Google" is disabled until it is.');
+  }
+  if (!hasTurso) {
+    console.warn('⚠ TURSO_DATABASE_URL is not set — using a local libSQL file. Fine for dev, not for production.');
+  }
+  if (!hasCloudinary) {
+    console.warn('⚠ CLOUDINARY_CLOUD_NAME is not set — admin image uploads will fail until Cloudinary is configured.');
   }
 });

@@ -3,24 +3,6 @@ import { getProductById } from './products.js';
 import { getUserById } from './users.js';
 import { issueCertificate } from './certificates.js';
 
-const insertStmt = db.prepare(`
-  INSERT INTO orders (reference, user_id, email, items, shipping_address, amount, currency, status, created_at)
-  VALUES (@reference, @userId, @email, @items, @shippingAddress, @amount, @currency, @status, @createdAt)
-`);
-
-const getStmt = db.prepare('SELECT * FROM orders WHERE reference = ?');
-const markPaidStmt = db.prepare(
-  'UPDATE orders SET status = ?, paid_at = ?, paystack_reference = ? WHERE reference = ?'
-);
-const setStatusStmt = db.prepare('UPDATE orders SET status = ?, fulfillment_note = ? WHERE reference = ?');
-const byUserStmt = db.prepare('SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC');
-const allWithUserStmt = db.prepare(`
-  SELECT orders.*, users.first_name, users.last_name
-  FROM orders
-  LEFT JOIN users ON users.id = orders.user_id
-  ORDER BY orders.created_at DESC
-`);
-
 export const ORDER_STATUSES = ['pending', 'paid', 'completed', 'cancelled'];
 
 function deserialize(row) {
@@ -42,31 +24,36 @@ function deserialize(row) {
   };
 }
 
-export function createOrder(order) {
+export async function createOrder(order) {
   const createdAt = new Date().toISOString();
-  insertStmt.run({
-    reference: order.reference,
-    userId: order.userId ?? null,
-    email: order.email,
-    items: JSON.stringify(order.items),
-    shippingAddress: order.shippingAddress ? JSON.stringify(order.shippingAddress) : null,
-    amount: order.amount,
-    currency: order.currency,
-    status: order.status,
-    createdAt,
+  await db.execute({
+    sql: `INSERT INTO orders (reference, user_id, email, items, shipping_address, amount, currency, status, created_at)
+          VALUES (@reference, @userId, @email, @items, @shippingAddress, @amount, @currency, @status, @createdAt)`,
+    args: {
+      reference: order.reference,
+      userId: order.userId ?? null,
+      email: order.email,
+      items: JSON.stringify(order.items),
+      shippingAddress: order.shippingAddress ? JSON.stringify(order.shippingAddress) : null,
+      amount: order.amount,
+      currency: order.currency,
+      status: order.status,
+      createdAt,
+    },
   });
-  return deserialize(getStmt.get(order.reference));
+  return getOrder(order.reference);
 }
 
-export function getOrder(reference) {
-  return deserialize(getStmt.get(reference));
+export async function getOrder(reference) {
+  const { rows } = await db.execute({ sql: 'SELECT * FROM orders WHERE reference = ?', args: [reference] });
+  return deserialize(rows[0]);
 }
 
 // Guest orders don't have an account to pull a name from — falls back to a
 // capitalized version of the email's local part ("jay@x.com" -> "Jay").
-function resolveOwnerName(order) {
+async function resolveOwnerName(order) {
   if (order.userId) {
-    const user = getUserById(order.userId);
+    const user = await getUserById(order.userId);
     if (user) return `${user.firstName} ${user.lastName}`;
   }
   const local = order.email.split('@')[0];
@@ -74,15 +61,17 @@ function resolveOwnerName(order) {
 }
 
 // One certificate per unit of every limited-edition line item, each with the
-// next sequential edition number for that product.
-function issueCertificatesForOrder(order) {
-  const ownerName = resolveOwnerName(order);
+// next sequential edition number for that product. Deliberately sequential
+// (not Promise.all) — issueCertificate's edition-number counter reads then
+// writes, so concurrent calls for the same product could hand out duplicates.
+async function issueCertificatesForOrder(order) {
+  const ownerName = await resolveOwnerName(order);
   for (const line of order.items) {
-    const product = getProductById(line.id);
+    const product = await getProductById(line.id);
     if (!product || !product.isLimited) continue;
     const quantity = Math.max(1, Math.floor(Number(line.quantity) || 1));
     for (let i = 0; i < quantity; i++) {
-      issueCertificate({
+      await issueCertificate({
         orderReference: order.reference,
         product,
         variantSize: line.size,
@@ -95,32 +84,48 @@ function issueCertificatesForOrder(order) {
   }
 }
 
-export function markOrderPaid(reference, paystackData) {
-  const existing = getStmt.get(reference);
+export async function markOrderPaid(reference, paystackData) {
+  const existing = await getOrder(reference);
   if (!existing) return null;
   // Both the verify route and the webhook can call this for the same order —
   // only issue certificates once.
   if (existing.status === 'paid' || existing.status === 'completed') {
-    return deserialize(existing);
+    return existing;
   }
-  markPaidStmt.run('paid', new Date().toISOString(), paystackData?.reference ?? reference, reference);
-  const order = deserialize(getStmt.get(reference));
-  issueCertificatesForOrder(order);
+  await db.execute({
+    sql: 'UPDATE orders SET status = ?, paid_at = ?, paystack_reference = ? WHERE reference = ?',
+    args: ['paid', new Date().toISOString(), paystackData?.reference ?? reference, reference],
+  });
+  const order = await getOrder(reference);
+  await issueCertificatesForOrder(order);
   return order;
 }
 
-export function getOrdersByUser(userId) {
-  return byUserStmt.all(userId).map(deserialize);
+export async function getOrdersByUser(userId) {
+  const { rows } = await db.execute({
+    sql: 'SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC',
+    args: [userId],
+  });
+  return rows.map(deserialize);
 }
 
-export function getAllOrders() {
-  return allWithUserStmt.all().map(deserialize);
+export async function getAllOrders() {
+  const { rows } = await db.execute(`
+    SELECT orders.*, users.first_name, users.last_name
+    FROM orders
+    LEFT JOIN users ON users.id = orders.user_id
+    ORDER BY orders.created_at DESC
+  `);
+  return rows.map(deserialize);
 }
 
-export function setOrderStatus(reference, status, note) {
+export async function setOrderStatus(reference, status, note) {
   if (!ORDER_STATUSES.includes(status)) throw new Error(`Invalid status: ${status}`);
-  const existing = getStmt.get(reference);
+  const existing = await getOrder(reference);
   if (!existing) return null;
-  setStatusStmt.run(status, note ?? existing.fulfillment_note, reference);
-  return deserialize(getStmt.get(reference));
+  await db.execute({
+    sql: 'UPDATE orders SET status = ?, fulfillment_note = ? WHERE reference = ?',
+    args: [status, note ?? existing.fulfillmentNote, reference],
+  });
+  return getOrder(reference);
 }

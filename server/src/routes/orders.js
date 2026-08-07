@@ -4,8 +4,12 @@ import { getOrdersByUser } from '../store/orders.js';
 
 const router = Router();
 
-router.get('/', requireAuth, (req, res) => {
-  res.json({ orders: getOrdersByUser(req.userId) });
+router.get('/', requireAuth, async (req, res) => {
+  try {
+    res.json({ orders: await getOrdersByUser(req.userId) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 export default router;

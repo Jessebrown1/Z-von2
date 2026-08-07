@@ -1,34 +1,5 @@
 import { db } from '../db.js';
 
-const listStmt = db.prepare('SELECT * FROM products ORDER BY created_at DESC');
-const bySlugStmt = db.prepare('SELECT * FROM products WHERE slug = ?');
-const byIdStmt = db.prepare('SELECT * FROM products WHERE id = ?');
-const deleteStmt = db.prepare('DELETE FROM products WHERE id = ?');
-
-const insertStmt = db.prepare(`
-  INSERT INTO products (
-    id, slug, name, collection, category, price, currency, is_new, is_limited,
-    edition_size, drop_number, mood_tags, occasion_tags, silhouette, fit, weight_gsm, color_family,
-    description, details, sizes, colors, images, created_at, updated_at
-  ) VALUES (
-    @id, @slug, @name, @collection, @category, @price, @currency, @isNew, @isLimited,
-    @editionSize, @dropNumber, @moodTags, @occasionTags, @silhouette, @fit, @weightGsm, @colorFamily,
-    @description, @details, @sizes, @colors, @images, @createdAt, @updatedAt
-  )
-`);
-
-const updateStmt = db.prepare(`
-  UPDATE products SET
-    slug = @slug, name = @name, collection = @collection, category = @category,
-    price = @price, currency = @currency, is_new = @isNew, is_limited = @isLimited,
-    edition_size = @editionSize, drop_number = @dropNumber,
-    mood_tags = @moodTags, occasion_tags = @occasionTags, silhouette = @silhouette,
-    fit = @fit, weight_gsm = @weightGsm, color_family = @colorFamily,
-    description = @description, details = @details,
-    sizes = @sizes, colors = @colors, images = @images, updated_at = @updatedAt
-  WHERE id = @id
-`);
-
 function deserialize(row) {
   if (!row) return null;
   return {
@@ -69,87 +40,117 @@ function slugify(text) {
     .replace(/(^-|-$)/g, '');
 }
 
-export function listProducts() {
-  return listStmt.all().map(deserialize);
+export async function listProducts() {
+  const { rows } = await db.execute('SELECT * FROM products ORDER BY created_at DESC');
+  return rows.map(deserialize);
 }
 
-export function getProductBySlug(slug) {
-  return deserialize(bySlugStmt.get(slug));
+export async function getProductBySlug(slug) {
+  const { rows } = await db.execute({ sql: 'SELECT * FROM products WHERE slug = ?', args: [slug] });
+  return deserialize(rows[0]);
 }
 
-export function getProductById(id) {
-  return deserialize(byIdStmt.get(id));
+export async function getProductById(id) {
+  const { rows } = await db.execute({ sql: 'SELECT * FROM products WHERE id = ?', args: [id] });
+  return deserialize(rows[0]);
 }
 
-export function createProduct(input) {
+export async function createProduct(input) {
   const now = new Date().toISOString();
   const slug = input.slug?.trim() || slugify(input.name);
   const id = `zevon-${slug}`;
 
-  insertStmt.run({
-    id,
-    slug,
-    name: input.name,
-    collection: input.collection || 'fearless',
-    category: input.category,
-    price: Math.round(Number(input.price)),
-    currency: input.currency || 'GHS',
-    isNew: input.isNew ? 1 : 0,
-    isLimited: input.isLimited ? 1 : 0,
-    editionSize: input.editionSize ? Number(input.editionSize) : null,
-    dropNumber: input.dropNumber ? Number(input.dropNumber) : 1,
-    moodTags: JSON.stringify(input.moodTags || []),
-    occasionTags: JSON.stringify(input.occasionTags || []),
-    silhouette: input.silhouette || 'regular',
-    fit: input.fit || 'true-to-size',
-    weightGsm: input.weightGsm ? Number(input.weightGsm) : null,
-    colorFamily: input.colorFamily || null,
-    description: input.description || '',
-    details: JSON.stringify(input.details || []),
-    sizes: JSON.stringify(input.sizes || []),
-    colors: JSON.stringify(input.colors || []),
-    images: JSON.stringify(input.images || []),
-    createdAt: now,
-    updatedAt: now,
+  await db.execute({
+    sql: `
+      INSERT INTO products (
+        id, slug, name, collection, category, price, currency, is_new, is_limited,
+        edition_size, drop_number, mood_tags, occasion_tags, silhouette, fit, weight_gsm, color_family,
+        description, details, sizes, colors, images, created_at, updated_at
+      ) VALUES (
+        @id, @slug, @name, @collection, @category, @price, @currency, @isNew, @isLimited,
+        @editionSize, @dropNumber, @moodTags, @occasionTags, @silhouette, @fit, @weightGsm, @colorFamily,
+        @description, @details, @sizes, @colors, @images, @createdAt, @updatedAt
+      )
+    `,
+    args: {
+      id,
+      slug,
+      name: input.name,
+      collection: input.collection || 'fearless',
+      category: input.category,
+      price: Math.round(Number(input.price)),
+      currency: input.currency || 'GHS',
+      isNew: input.isNew ? 1 : 0,
+      isLimited: input.isLimited ? 1 : 0,
+      editionSize: input.editionSize ? Number(input.editionSize) : null,
+      dropNumber: input.dropNumber ? Number(input.dropNumber) : 1,
+      moodTags: JSON.stringify(input.moodTags || []),
+      occasionTags: JSON.stringify(input.occasionTags || []),
+      silhouette: input.silhouette || 'regular',
+      fit: input.fit || 'true-to-size',
+      weightGsm: input.weightGsm ? Number(input.weightGsm) : null,
+      colorFamily: input.colorFamily || null,
+      description: input.description || '',
+      details: JSON.stringify(input.details || []),
+      sizes: JSON.stringify(input.sizes || []),
+      colors: JSON.stringify(input.colors || []),
+      images: JSON.stringify(input.images || []),
+      createdAt: now,
+      updatedAt: now,
+    },
   });
 
   return getProductById(id);
 }
 
-export function updateProduct(id, input) {
-  const existing = getProductById(id);
+export async function updateProduct(id, input) {
+  const existing = await getProductById(id);
   if (!existing) return null;
 
-  updateStmt.run({
-    id,
-    slug: input.slug?.trim() || existing.slug,
-    name: input.name ?? existing.name,
-    collection: input.collection ?? existing.collection,
-    category: input.category ?? existing.category,
-    price: input.price != null ? Math.round(Number(input.price)) : existing.price,
-    currency: input.currency ?? existing.currency,
-    isNew: input.isNew != null ? (input.isNew ? 1 : 0) : existing.isNew ? 1 : 0,
-    isLimited: input.isLimited != null ? (input.isLimited ? 1 : 0) : existing.isLimited ? 1 : 0,
-    editionSize: input.editionSize !== undefined ? (input.editionSize ? Number(input.editionSize) : null) : existing.editionSize,
-    dropNumber: input.dropNumber !== undefined ? Number(input.dropNumber) || 1 : existing.dropNumber,
-    moodTags: JSON.stringify(input.moodTags ?? existing.moodTags),
-    occasionTags: JSON.stringify(input.occasionTags ?? existing.occasionTags),
-    silhouette: input.silhouette ?? existing.silhouette,
-    fit: input.fit ?? existing.fit,
-    weightGsm: input.weightGsm !== undefined ? (input.weightGsm ? Number(input.weightGsm) : null) : existing.weightGsm,
-    colorFamily: input.colorFamily ?? existing.colorFamily,
-    description: input.description ?? existing.description,
-    details: JSON.stringify(input.details ?? existing.details),
-    sizes: JSON.stringify(input.sizes ?? existing.sizes),
-    colors: JSON.stringify(input.colors ?? existing.colors),
-    images: JSON.stringify(input.images ?? existing.images),
-    updatedAt: new Date().toISOString(),
+  await db.execute({
+    sql: `
+      UPDATE products SET
+        slug = @slug, name = @name, collection = @collection, category = @category,
+        price = @price, currency = @currency, is_new = @isNew, is_limited = @isLimited,
+        edition_size = @editionSize, drop_number = @dropNumber,
+        mood_tags = @moodTags, occasion_tags = @occasionTags, silhouette = @silhouette,
+        fit = @fit, weight_gsm = @weightGsm, color_family = @colorFamily,
+        description = @description, details = @details,
+        sizes = @sizes, colors = @colors, images = @images, updated_at = @updatedAt
+      WHERE id = @id
+    `,
+    args: {
+      id,
+      slug: input.slug?.trim() || existing.slug,
+      name: input.name ?? existing.name,
+      collection: input.collection ?? existing.collection,
+      category: input.category ?? existing.category,
+      price: input.price != null ? Math.round(Number(input.price)) : existing.price,
+      currency: input.currency ?? existing.currency,
+      isNew: input.isNew != null ? (input.isNew ? 1 : 0) : existing.isNew ? 1 : 0,
+      isLimited: input.isLimited != null ? (input.isLimited ? 1 : 0) : existing.isLimited ? 1 : 0,
+      editionSize:
+        input.editionSize !== undefined ? (input.editionSize ? Number(input.editionSize) : null) : existing.editionSize,
+      dropNumber: input.dropNumber !== undefined ? Number(input.dropNumber) || 1 : existing.dropNumber,
+      moodTags: JSON.stringify(input.moodTags ?? existing.moodTags),
+      occasionTags: JSON.stringify(input.occasionTags ?? existing.occasionTags),
+      silhouette: input.silhouette ?? existing.silhouette,
+      fit: input.fit ?? existing.fit,
+      weightGsm: input.weightGsm !== undefined ? (input.weightGsm ? Number(input.weightGsm) : null) : existing.weightGsm,
+      colorFamily: input.colorFamily ?? existing.colorFamily,
+      description: input.description ?? existing.description,
+      details: JSON.stringify(input.details ?? existing.details),
+      sizes: JSON.stringify(input.sizes ?? existing.sizes),
+      colors: JSON.stringify(input.colors ?? existing.colors),
+      images: JSON.stringify(input.images ?? existing.images),
+      updatedAt: new Date().toISOString(),
+    },
   });
 
   return getProductById(id);
 }
 
-export function deleteProduct(id) {
-  const result = deleteStmt.run(id);
-  return result.changes > 0;
+export async function deleteProduct(id) {
+  const result = await db.execute({ sql: 'DELETE FROM products WHERE id = ?', args: [id] });
+  return result.rowsAffected > 0;
 }

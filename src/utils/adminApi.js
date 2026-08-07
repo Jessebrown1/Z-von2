@@ -1,4 +1,4 @@
-import { apiRequest } from './api';
+import { apiRequest, API_BASE_URL } from './api';
 
 export function fetchAllOrders() {
   return apiRequest('/api/admin/orders');
@@ -29,7 +29,7 @@ export async function uploadImage(file) {
   const formData = new FormData();
   formData.append('image', file);
 
-  const res = await fetch('/api/admin/upload', {
+  const res = await fetch(`${API_BASE_URL}/api/admin/upload`, {
     method: 'POST',
     credentials: 'include',
     body: formData,

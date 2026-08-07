@@ -6,11 +6,9 @@ export default defineConfig({
   server: {
     port: process.env.PORT ? Number(process.env.PORT) : 5173,
     proxy: {
+      // Image uploads go straight to Cloudinary now (absolute URLs), so this
+      // is the only proxy needed for local dev.
       '/api': {
-        target: `http://localhost:${process.env.API_PORT || 4000}`,
-        changeOrigin: true,
-      },
-      '/uploads': {
         target: `http://localhost:${process.env.API_PORT || 4000}`,
         changeOrigin: true,
       },

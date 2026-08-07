@@ -14,10 +14,15 @@ export function signSession(userId) {
 }
 
 export function setSessionCookie(res, token) {
+  const isProduction = process.env.NODE_ENV === 'production';
   res.cookie(COOKIE_NAME, token, {
     httpOnly: true,
-    sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
+    // In dev the frontend talks to this API through Vite's proxy, so it's
+    // same-origin and 'lax' is fine. In production the frontend (Vercel) and
+    // this API (Render) are different origins — cross-site fetch() only ever
+    // sends cookies with SameSite=None, which in turn requires Secure.
+    sameSite: isProduction ? 'none' : 'lax',
+    secure: isProduction,
     maxAge: 30 * 24 * 60 * 60 * 1000,
   });
 }
@@ -52,13 +57,17 @@ export function optionalAuth(req, res, next) {
 }
 
 /** Blocks with 401/403 unless the signed-in user has the 'admin' role. */
-export function requireAdmin(req, res, next) {
+export async function requireAdmin(req, res, next) {
   const userId = readUserId(req);
   if (!userId) return res.status(401).json({ error: 'Not signed in' });
 
-  const user = getUserById(userId);
-  if (!user || user.role !== 'admin') return res.status(403).json({ error: 'Admin access required' });
+  try {
+    const user = await getUserById(userId);
+    if (!user || user.role !== 'admin') return res.status(403).json({ error: 'Admin access required' });
 
-  req.userId = userId;
-  next();
+    req.userId = userId;
+    next();
+  } catch (err) {
+    next(err);
+  }
 }

@@ -28,7 +28,11 @@
 
 .mood-tile {
   position: relative;
-  padding: var(--space-8) var(--space-5);
+  aspect-ratio: 4 / 5;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--space-6) var(--space-5);
   border-radius: var(--radius-md);
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: linear-gradient(155deg, var(--mood-accent), var(--bg-surface));
@@ -36,13 +40,37 @@
   transition: transform var(--duration-base) var(--ease-out), border-color var(--duration-base) var(--ease-out);
 }
 
-.mood-tile::before {
-  content: '';
+.mood-tile-image {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 30% 20%, var(--mood-glow), transparent 70%);
-  opacity: 0;
-  transition: opacity var(--duration-base) var(--ease-out);
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  /* Same base photography across moods right now (placeholder catalog) —
+     the tint + grayscale keep each tile visually distinct by mood until
+     real per-product imagery is uploaded through the admin. */
+  filter: grayscale(0.25) contrast(1.05) brightness(0.85);
+  transition: transform var(--duration-slow) var(--ease-out), filter var(--duration-base) var(--ease-out);
+}
+
+.mood-tile:hover .mood-tile-image {
+  transform: scale(1.05);
+  filter: grayscale(0.1) contrast(1.08) brightness(0.9);
+}
+
+.mood-tile-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.15) 55%, transparent 75%),
+    radial-gradient(circle at 80% 10%, var(--mood-glow), transparent 60%);
+  mix-blend-mode: normal;
+}
+
+.mood-tile:hover .mood-tile-scrim {
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.2) 55%, transparent 75%),
+    radial-gradient(circle at 80% 10%, var(--mood-glow), transparent 70%);
 }
 
 .mood-tile:hover {
@@ -50,17 +78,13 @@
   border-color: var(--glass-border-gold);
 }
 
-.mood-tile:hover::before {
-  opacity: 1;
-}
-
 .mood-tile-label {
   position: relative;
   display: block;
   font-family: var(--font-serif);
   font-size: 22px;
-  color: var(--color-ink);
-  z-index: 1;
+  color: #f2efe8;
+  z-index: 2;
 }
 
 .mood-tile-tagline {
@@ -68,8 +92,8 @@
   display: block;
   margin-top: var(--space-2);
   font-size: var(--fs-micro);
-  color: rgba(233, 229, 221, 0.6);
-  z-index: 1;
+  color: rgba(242, 239, 232, 0.75);
+  z-index: 2;
 }
 
 @media (max-width: 1024px) {

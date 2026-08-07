@@ -1,12 +1,5 @@
 import { db } from '../db.js';
 
-const insertStmt = db.prepare(`
-  INSERT INTO users (id, email, password_hash, first_name, last_name, phone, created_at)
-  VALUES (@id, @email, @passwordHash, @firstName, @lastName, @phone, @createdAt)
-`);
-const byEmailStmt = db.prepare('SELECT * FROM users WHERE email = ?');
-const byIdStmt = db.prepare('SELECT * FROM users WHERE id = ?');
-
 function deserialize(row) {
   if (!row) return null;
   return {
@@ -28,23 +21,29 @@ export function toPublicUser(user) {
   return rest;
 }
 
-export function createUser({ id, email, passwordHash, firstName, lastName, phone }) {
-  insertStmt.run({
-    id,
-    email: email.toLowerCase(),
-    passwordHash,
-    firstName,
-    lastName,
-    phone: phone || null,
-    createdAt: new Date().toISOString(),
+export async function createUser({ id, email, passwordHash, firstName, lastName, phone }) {
+  await db.execute({
+    sql: `INSERT INTO users (id, email, password_hash, first_name, last_name, phone, created_at)
+          VALUES (@id, @email, @passwordHash, @firstName, @lastName, @phone, @createdAt)`,
+    args: {
+      id,
+      email: email.toLowerCase(),
+      passwordHash,
+      firstName,
+      lastName,
+      phone: phone || null,
+      createdAt: new Date().toISOString(),
+    },
   });
-  return deserialize(byIdStmt.get(id));
+  return getUserById(id);
 }
 
-export function getUserByEmail(email) {
-  return deserialize(byEmailStmt.get(email.toLowerCase()));
+export async function getUserByEmail(email) {
+  const { rows } = await db.execute({ sql: 'SELECT * FROM users WHERE email = ?', args: [email.toLowerCase()] });
+  return deserialize(rows[0]);
 }
 
-export function getUserById(id) {
-  return deserialize(byIdStmt.get(id));
+export async function getUserById(id) {
+  const { rows } = await db.execute({ sql: 'SELECT * FROM users WHERE id = ?', args: [id] });
+  return deserialize(rows[0]);
 }
