@@ -39,15 +39,29 @@ function buildStats(orders) {
     currency,
     orderCount: orders.length,
     salesCount: sales.length,
+    pendingCount: orders.filter((o) => o.status === 'pending').length,
     completedCount: orders.filter((o) => o.status === 'completed').length,
     avgOrderValue: sales.length ? revenue / sales.length : 0,
     trend,
     topProducts,
+    productTotals,
   };
 }
 
+/** Limited pieces sold-out-soonest first — reads "sold" from the same order
+    data buildStats already scanned, so no extra requests are needed. */
+function buildLimitedStock(products, productTotals) {
+  return products
+    .filter((p) => p.isLimited && p.editionSize)
+    .map((p) => {
+      const sold = productTotals.get(p.id)?.quantity || 0;
+      return { product: p, sold, remaining: Math.max(0, p.editionSize - sold) };
+    })
+    .sort((a, b) => a.remaining - b.remaining);
+}
+
 export default function AdminOverview() {
-  const { getProductById } = useProducts();
+  const { products, getProductById } = useProducts();
   const [orders, setOrders] = useState(null);
   const [error, setError] = useState(null);
 
@@ -61,6 +75,10 @@ export default function AdminOverview() {
   useEffect(load, []);
 
   const stats = useMemo(() => (orders ? buildStats(orders) : null), [orders]);
+  const limitedStock = useMemo(
+    () => (stats ? buildLimitedStock(products, stats.productTotals) : []),
+    [products, stats]
+  );
 
   if (error) {
     return (
@@ -91,6 +109,14 @@ export default function AdminOverview() {
         <div className="admin-overview-stat glass">
           <span className="admin-overview-stat-value">{stats.completedCount}</span>
           <span className="admin-overview-stat-label">Fulfilled</span>
+        </div>
+        <div className="admin-overview-stat glass">
+          <span className="admin-overview-stat-value">{stats.pendingCount}</span>
+          <span className="admin-overview-stat-label">Pending</span>
+        </div>
+        <div className="admin-overview-stat glass">
+          <span className="admin-overview-stat-value">{products.length}</span>
+          <span className="admin-overview-stat-label">Products</span>
         </div>
       </div>
 
@@ -136,6 +162,26 @@ export default function AdminOverview() {
           </ul>
         )}
       </div>
+
+      {limitedStock.length > 0 && (
+        <div className="admin-overview-panel glass">
+          <h3 className="serif">Limited Edition Stock</h3>
+          <ul className="admin-stock-list">
+            {limitedStock.map(({ product, sold, remaining }) => {
+              const isLow = remaining > 0 && remaining <= product.editionSize * 0.1;
+              const isOut = remaining === 0;
+              return (
+                <li key={product.id}>
+                  <span className="admin-stock-name">{product.name}</span>
+                  <span className={`admin-stock-remaining ${isOut ? 'is-out' : isLow ? 'is-low' : ''}`}>
+                    {isOut ? 'Sold out' : `${remaining} of ${product.editionSize} left`}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

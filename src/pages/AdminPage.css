@@ -1,45 +1,18 @@
 .admin-page {
-  padding: calc(var(--nav-height) + var(--space-8)) var(--gutter) var(--space-10);
   min-height: 100vh;
   background: var(--bg-primary);
+}
+
+.admin-page-body {
+  padding: calc(var(--nav-height) + var(--space-6)) var(--gutter) var(--space-10);
   max-width: var(--max-content-width);
   margin: 0 auto;
 }
 
-.admin-page-header {
-  margin-bottom: var(--space-7);
-}
-
-.admin-page-header h1 {
+.admin-page-title {
   font-weight: 400;
   font-size: var(--fs-h2);
-  margin-top: var(--space-3);
-}
-
-.admin-tabs {
-  display: flex;
-  gap: var(--space-6);
-  border-bottom: var(--border-hairline);
-  margin-bottom: var(--space-8);
-}
-
-.admin-tab {
-  padding-bottom: var(--space-4);
-  font-size: var(--fs-small);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  color: var(--text-secondary);
-  border-bottom: 1px solid transparent;
-  transition: color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out);
-}
-
-.admin-tab:hover {
-  color: var(--text-primary);
-}
-
-.admin-tab.is-active {
-  color: var(--accent);
-  border-color: var(--accent);
+  margin-bottom: var(--space-7);
 }
 
 .admin-loading,

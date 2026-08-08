@@ -6,7 +6,7 @@
 
 .admin-overview-stats {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: var(--space-4);
 }
 
@@ -111,6 +111,44 @@
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   font-size: var(--fs-micro);
+}
+
+.admin-stock-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.admin-stock-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) 0;
+  border-bottom: var(--border-hairline);
+  font-size: var(--fs-small);
+}
+
+.admin-stock-list li:last-child {
+  border-bottom: none;
+}
+
+.admin-stock-name {
+  color: var(--text-primary);
+}
+
+.admin-stock-remaining {
+  color: var(--text-secondary);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  font-size: var(--fs-micro);
+}
+
+.admin-stock-remaining.is-low {
+  color: var(--accent);
+}
+
+.admin-stock-remaining.is-out {
+  color: var(--color-error);
 }
 
 @media (max-width: 720px) {

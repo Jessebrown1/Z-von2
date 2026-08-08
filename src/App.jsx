@@ -54,6 +54,8 @@ function RouteChangeHandler() {
 
 export default function App() {
   useLenis();
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
 
   return (
     <ThemeProvider>
@@ -64,7 +66,7 @@ export default function App() {
               <ZevonAIProvider>
                 <GrainOverlay />
                 <PageTransitionOverlay />
-                <Navbar />
+                {!isAdminRoute && <Navbar />}
                 <RouteChangeHandler />
 
                 <main>
@@ -129,8 +131,8 @@ export default function App() {
                   </Routes>
                 </main>
 
-                <Footer />
-                <ZevonAI />
+                {!isAdminRoute && <Footer />}
+                {!isAdminRoute && <ZevonAI />}
               </ZevonAIProvider>
             </CartProvider>
           </WishlistProvider>
