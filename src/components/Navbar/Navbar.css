@@ -365,7 +365,8 @@
     display: none;
   }
 
-  .navbar-account {
+  .navbar-account,
+  .navbar-account-link {
     display: none;
   }
 

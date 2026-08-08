@@ -10,6 +10,20 @@
   box-sizing: border-box;
 }
 
+/* Scroll stays fully functional everywhere (page, drawers, chat, admin
+   tables) — this only hides the visual scrollbar track/thumb, keeping the
+   Liquid Glass surfaces free of the browser's default scrollbar chrome. */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
 html,
 body {
   background: var(--bg-primary);
