@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import AuthLayout from '../components/AuthLayout';
 import GoogleSignInButton from '../components/GoogleSignInButton';
+import PasswordField from '../components/PasswordField';
 import { useAuth } from '../context/AuthContext';
 import './AuthPage.css';
 
@@ -70,26 +71,20 @@ export default function SignupPage() {
             placeholder="+233 24 000 0000"
           />
         </label>
-        <label className="auth-field">
-          <span>Password</span>
-          <input
-            type="password"
-            value={form.password}
-            onChange={handleChange('password')}
-            autoComplete="new-password"
-            required
-          />
-        </label>
-        <label className="auth-field">
-          <span>Confirm password</span>
-          <input
-            type="password"
-            value={form.confirmPassword}
-            onChange={handleChange('confirmPassword')}
-            autoComplete="new-password"
-            required
-          />
-        </label>
+        <PasswordField
+          label="Password"
+          value={form.password}
+          onChange={handleChange('password')}
+          autoComplete="new-password"
+          required
+        />
+        <PasswordField
+          label="Confirm password"
+          value={form.confirmPassword}
+          onChange={handleChange('confirmPassword')}
+          autoComplete="new-password"
+          required
+        />
 
         {error && <p className="auth-form-error">{error}</p>}
 

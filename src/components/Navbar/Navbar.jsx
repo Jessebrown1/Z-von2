@@ -71,7 +71,11 @@ export default function Navbar() {
                 <path d="M4 10h16l-1.6 9.2a1.5 1.5 0 0 1-1.48 1.3H7.08a1.5 1.5 0 0 1-1.48-1.3L4 10z" />
                 <path d="M9 13v5M12 13v5M15 13v5" />
               </svg>
-              {itemCount > 0 && <span className="navbar-cart-count">{itemCount}</span>}
+              {itemCount > 0 && (
+                <span className="navbar-cart-count" key={itemCount}>
+                  {itemCount}
+                </span>
+              )}
             </button>
           )}
 

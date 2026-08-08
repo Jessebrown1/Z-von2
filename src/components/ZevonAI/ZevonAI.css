@@ -591,4 +591,10 @@ body.nav-menu-open .zevon-ai-trigger {
   .ai-comparison-products {
     grid-template-columns: 1fr;
   }
+
+  /* Below 16px, iOS Safari auto-zooms the whole page on focus and never
+     zooms back out on its own — this is what "not responsive" was. */
+  .ai-chat-input-row input {
+    font-size: 16px;
+  }
 }

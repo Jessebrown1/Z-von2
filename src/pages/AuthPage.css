@@ -33,6 +33,39 @@
   border-color: var(--accent);
 }
 
+.auth-field-password-wrap {
+  position: relative;
+  display: flex;
+}
+
+.auth-field-password-wrap input {
+  width: 100%;
+  padding-right: calc(var(--space-4) + 30px);
+}
+
+.auth-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: var(--space-3);
+  transform: translateY(-50%);
+  display: flex;
+  color: var(--text-secondary);
+  transition: color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
+}
+
+.auth-password-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+.auth-password-toggle:hover {
+  color: var(--accent);
+}
+
+.auth-password-toggle:active {
+  transform: translateY(-50%) scale(0.9);
+}
+
 .auth-field-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
