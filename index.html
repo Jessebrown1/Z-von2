@@ -19,22 +19,6 @@
         document.documentElement.dataset.theme = 'dark';
       }
     })();
-    // TEMP DIAGNOSTIC — remove after mobile blank-screen bug is fixed.
-    (function () {
-      function show(label, detail) {
-        var box = document.createElement('div');
-        box.style.cssText = 'position:fixed;inset:0;z-index:999999;background:#fff;color:#900;' +
-          'font:12px/1.4 monospace;padding:16px;overflow:auto;white-space:pre-wrap;';
-        box.textContent = label + '\n' + detail;
-        document.body.appendChild(box);
-      }
-      window.addEventListener('error', function (e) {
-        show('JS ERROR: ' + e.message, (e.filename || '') + ':' + e.lineno + ':' + e.colno + '\n' + (e.error && e.error.stack || ''));
-      });
-      window.addEventListener('unhandledrejection', function (e) {
-        show('UNHANDLED REJECTION', (e.reason && (e.reason.stack || e.reason.message)) || String(e.reason));
-      });
-    })();
   </script>
 </head>
 <body>

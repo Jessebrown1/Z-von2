@@ -118,10 +118,16 @@ export default function CinematicIntro() {
 
       const setStudio = gsap.quickSetter(bgStudioRef.current, 'opacity');
       const setParticles = gsap.quickSetter(particlesRef.current, 'opacity');
-      const setProductScale = gsap.quickSetter(productWrapRef.current, 'scale');
+      // quickSetter doesn't expand the 'scale' alias to scaleX/scaleY the way
+      // gsap.set() does — on some WebKit builds that alias reaches
+      // setAttribute('scaleX,scaleY', ...) as a literal (invalid) attribute
+      // name and throws, so scaleX/scaleY are set separately here instead.
+      const setProductScaleX = gsap.quickSetter(productWrapRef.current, 'scaleX');
+      const setProductScaleY = gsap.quickSetter(productWrapRef.current, 'scaleY');
       const setFrameOpacity = gsap.quickSetter(frameRef.current, 'opacity');
       const setImgOpacity = gsap.quickSetter(imgRef.current, 'opacity');
-      const setImgScale = gsap.quickSetter(imgRef.current, 'scale');
+      const setImgScaleX = gsap.quickSetter(imgRef.current, 'scaleX');
+      const setImgScaleY = gsap.quickSetter(imgRef.current, 'scaleY');
       const setCanvasOpacity = gsap.quickSetter(canvasRef.current, 'opacity');
       const setManifesto = gsap.quickSetter(manifestoRef.current, 'opacity');
       const setManifestoY = gsap.quickSetter(manifestoRef.current, 'y', 'px');
@@ -166,8 +172,12 @@ export default function CinematicIntro() {
         // Product emerges from darkness, camera dollies in.
         const imageIn = remap(p, 0.12, 0.34);
         setImgOpacity(imageIn * (1 - remap(p, 0.54, 0.6)));
-        setImgScale(1.32 - imageIn * 0.32);
-        setProductScale(1 + remap(p, 0.18, 0.3) * 0.12 - remap(p, 0.9, 1) * 0.07);
+        const imgScale = 1.32 - imageIn * 0.32;
+        setImgScaleX(imgScale);
+        setImgScaleY(imgScale);
+        const productScale = 1 + remap(p, 0.18, 0.3) * 0.12 - remap(p, 0.9, 1) * 0.07;
+        setProductScaleX(productScale);
+        setProductScaleY(productScale);
 
         // The glass stage card behind the photography — frames the (always
         // dark-backed) product shot so it reads as a deliberate card rather
