@@ -19,6 +19,7 @@ const PARTICLES = Array.from({ length: 16 }, (_, i) => ({
  */
 export default function Hero() {
   const sectionRef = useRef(null);
+  const contentRef = useRef(null);
   const particlesRef = useRef(null);
   const manifestoRef = useRef(null);
   const particles = useMemo(() => PARTICLES, []);
@@ -36,6 +37,35 @@ export default function Hero() {
         .to(particlesRef.current, { opacity: 0.85, duration: 1.2, ease: 'power2.out' })
         .to(letters, { opacity: 1, y: 0, duration: 1.3, ease: 'power3.out', stagger: 0.09 }, 0.15)
         .to(manifestoRef.current, { opacity: 1, y: 0, duration: 1, ease: 'power2.out' }, 0.9);
+
+      // Depth exit — as the hero scrolls out, the wordmark recedes and
+      // tilts back in 3D space instead of just sliding off flat. Scrubbed
+      // to scroll position, no pin: the section still scrolls normally.
+      gsap.to(contentRef.current, {
+        scale: 0.82,
+        y: -60,
+        rotateX: 14,
+        opacity: 0,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true,
+        },
+      });
+
+      gsap.to(particlesRef.current, {
+        opacity: 0,
+        scale: 1.15,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true,
+        },
+      });
     },
     [],
     sectionRef
@@ -62,17 +92,19 @@ export default function Hero() {
         ))}
       </div>
 
-      <h1 className="hero-logo" aria-label="ZÉVON">
-        {['Z', 'É', 'V', 'O', 'N'].map((letter, i) => (
-          <span key={i} className="metallic-gold-text">
-            {letter}
-          </span>
-        ))}
-      </h1>
+      <div className="hero-content" ref={contentRef}>
+        <h1 className="hero-logo" aria-label="ZÉVON">
+          {['Z', 'É', 'V', 'O', 'N'].map((letter, i) => (
+            <span key={i} className="metallic-gold-text">
+              {letter}
+            </span>
+          ))}
+        </h1>
 
-      <p className="hero-manifesto serif" ref={manifestoRef}>
-        Nothing loud. Everything intentional.
-      </p>
+        <p className="hero-manifesto serif" ref={manifestoRef}>
+          Nothing loud. Everything intentional.
+        </p>
+      </div>
 
       <div className="scroll-cue">
         <span />

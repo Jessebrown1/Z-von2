@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import AuthLayout from '../components/AuthLayout';
 import GoogleSignInButton from '../components/GoogleSignInButton';
 import { useAuth } from '../context/AuthContext';
@@ -10,6 +10,7 @@ const initialForm = { firstName: '', lastName: '', email: '', phone: '', passwor
 export default function SignupPage() {
   const { signup } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [form, setForm] = useState(initialForm);
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -32,7 +33,8 @@ export default function SignupPage() {
     setIsSubmitting(true);
     try {
       const user = await signup(form);
-      navigate(user.role === 'admin' ? '/admin' : '/account/orders', { replace: true });
+      const fallback = user.role === 'admin' ? '/admin' : '/account/orders';
+      navigate(location.state?.from || fallback, { replace: true });
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.');
     } finally {
@@ -96,7 +98,7 @@ export default function SignupPage() {
         </button>
       </form>
 
-      <GoogleSignInButton />
+      <GoogleSignInButton redirectTo={location.state?.from} />
 
       <p className="auth-switch">
         Already have an account? <Link to="/login">Sign in</Link>

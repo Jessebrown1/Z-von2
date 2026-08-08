@@ -6,6 +6,7 @@ import { GrainOverlay } from './components/UI';
 import PageTransitionOverlay, { runTransition } from './components/PageTransitionOverlay';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
+import GuestRoute from './components/GuestRoute';
 import { CartProvider } from './context/CartContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
@@ -86,8 +87,22 @@ export default function App() {
                         </ProtectedRoute>
                       }
                     />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/signup" element={<SignupPage />} />
+                    <Route
+                      path="/login"
+                      element={
+                        <GuestRoute>
+                          <LoginPage />
+                        </GuestRoute>
+                      }
+                    />
+                    <Route
+                      path="/signup"
+                      element={
+                        <GuestRoute>
+                          <SignupPage />
+                        </GuestRoute>
+                      }
+                    />
                     <Route
                       path="/account/orders"
                       element={

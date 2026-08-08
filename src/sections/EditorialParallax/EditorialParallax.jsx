@@ -11,11 +11,31 @@ import './EditorialParallax.css';
 export default function EditorialParallax() {
   const sectionRef = useRef(null);
   const imgRef = useRef(null);
+  const textRef = useRef(null);
 
   useGsapContext(
     () => {
+      // Background layer: drifts vertically and pushes toward the viewer
+      // (scale up) as it scrolls through — the two combined read as the
+      // image having real depth rather than being a flat photo.
       gsap.to(imgRef.current, {
         yPercent: 16,
+        scale: 1.12,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: true,
+        },
+      });
+
+      // Foreground layer: the text moves at a slower, opposite-leaning rate
+      // and tilts slightly on its own X axis — two layers scrolling at
+      // different speeds is what actually sells "3D" versus a flat page.
+      gsap.to(textRef.current, {
+        yPercent: -8,
+        rotateX: -4,
         ease: 'none',
         scrollTrigger: {
           trigger: sectionRef.current,
@@ -45,7 +65,7 @@ export default function EditorialParallax() {
         <div className="editorial-parallax-overlay" />
       </div>
 
-      <div className="editorial-parallax-text">
+      <div className="editorial-parallax-text" ref={textRef}>
         <p className="eyebrow">No. 001</p>
         <h2 className="serif">
           Every piece is deliberate.
