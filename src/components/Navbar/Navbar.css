@@ -246,11 +246,13 @@
 }
 
 .navbar-mobile-account-name {
+  position: absolute;
+  left: var(--gutter);
+  bottom: var(--space-7);
   font-size: var(--fs-small);
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   color: var(--accent);
-  margin-bottom: calc(-1 * var(--space-3));
 }
 
 .navbar-mobile-menu button.navbar-mobile-logout {
@@ -270,7 +272,8 @@
   }
 
   .navbar-account,
-  .navbar-account-link {
+  .navbar-account-link,
+  .navbar-actions > .navbar-theme-toggle {
     display: none;
   }
 

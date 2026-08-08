@@ -65,8 +65,9 @@ export default function Navbar() {
               aria-label={`Open cart, ${itemCount} items`}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-                <path d="M6 8h12l-1 12.5a1.5 1.5 0 0 1-1.5 1.5h-7a1.5 1.5 0 0 1-1.5-1.5L6 8z" />
-                <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+                <path d="M7.5 10a4.5 4.5 0 0 1 9 0" />
+                <path d="M4 10h16l-1.6 9.2a1.5 1.5 0 0 1-1.48 1.3H7.08a1.5 1.5 0 0 1-1.48-1.3L4 10z" />
+                <path d="M9 13v5M12 13v5M15 13v5" />
               </svg>
               {itemCount > 0 && <span className="navbar-cart-count">{itemCount}</span>}
             </button>
