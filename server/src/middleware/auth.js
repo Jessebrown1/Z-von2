@@ -13,9 +13,9 @@ export function signSession(userId) {
   return jwt.sign({ sub: userId }, getJwtSecret(), { expiresIn: '30d' });
 }
 
-export function setSessionCookie(res, token) {
+function cookieOptions() {
   const isProduction = process.env.NODE_ENV === 'production';
-  res.cookie(COOKIE_NAME, token, {
+  return {
     httpOnly: true,
     // In dev the frontend talks to this API through Vite's proxy, so it's
     // same-origin and 'lax' is fine. In production the frontend (Vercel) and
@@ -23,12 +23,19 @@ export function setSessionCookie(res, token) {
     // sends cookies with SameSite=None, which in turn requires Secure.
     sameSite: isProduction ? 'none' : 'lax',
     secure: isProduction,
-    maxAge: 30 * 24 * 60 * 60 * 1000,
-  });
+  };
+}
+
+export function setSessionCookie(res, token) {
+  res.cookie(COOKIE_NAME, token, { ...cookieOptions(), maxAge: 30 * 24 * 60 * 60 * 1000 });
 }
 
 export function clearSessionCookie(res) {
-  res.clearCookie(COOKIE_NAME);
+  // clearCookie must be called with the same sameSite/secure attributes the
+  // cookie was set with, or the browser treats it as a different cookie and
+  // silently keeps the original session alive — a real bug that shipped
+  // here (bare `clearCookie(COOKIE_NAME)`, no options).
+  res.clearCookie(COOKIE_NAME, cookieOptions());
 }
 
 function readUserId(req) {

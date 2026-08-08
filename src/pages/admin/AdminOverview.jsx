@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useProducts } from '../../context/ProductsContext';
 import { formatPrice } from '../../utils/helpers';
 import { fetchAllOrders } from '../../utils/adminApi';
@@ -64,12 +65,23 @@ export default function AdminOverview() {
   const { products, getProductById } = useProducts();
   const [orders, setOrders] = useState(null);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const load = () => {
     setError(null);
     fetchAllOrders()
       .then(({ orders }) => setOrders(orders))
-      .catch((err) => setError(err.message || 'Could not load sales data.'));
+      .catch((err) => {
+        // A 401 here means the session is genuinely gone (expired, or
+        // cleared elsewhere) — retrying the same request would just 401
+        // again, so send the admin to sign back in instead of dead-ending
+        // on a Retry button that can never succeed.
+        if (err.status === 401) {
+          navigate('/login', { replace: true, state: { from: '/admin' } });
+          return;
+        }
+        setError(err.message || 'Could not load sales data.');
+      });
   };
 
   useEffect(load, []);

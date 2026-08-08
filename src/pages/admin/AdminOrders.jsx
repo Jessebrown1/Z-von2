@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useProducts } from '../../context/ProductsContext';
 import { formatPrice } from '../../utils/helpers';
 import { fetchAllOrders, setOrderStatus } from '../../utils/adminApi';
@@ -22,12 +23,21 @@ export default function AdminOrders() {
   const [loadError, setLoadError] = useState(null);
   const [actionError, setActionError] = useState(null);
   const [updatingRef, setUpdatingRef] = useState(null);
+  const navigate = useNavigate();
 
   const load = () => {
     setLoadError(null);
     fetchAllOrders()
       .then(({ orders }) => setOrders(orders))
-      .catch((err) => setLoadError(err.message || 'Could not load orders.'));
+      .catch((err) => {
+        // A 401 means the session is genuinely gone — retrying would just
+        // 401 again, so send the admin back to sign in instead.
+        if (err.status === 401) {
+          navigate('/login', { replace: true, state: { from: '/admin' } });
+          return;
+        }
+        setLoadError(err.message || 'Could not load orders.');
+      });
   };
 
   useEffect(load, []);
