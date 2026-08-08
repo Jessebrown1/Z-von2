@@ -19,8 +19,13 @@ export default function AccountMenu() {
 
   if (!isAuthenticated) {
     return (
-      <NavLink to="/login" className="navbar-account-link">
-        Login
+      <NavLink to="/login" className="navbar-account-link" aria-label="Log in">
+        <span className="navbar-account-avatar navbar-account-avatar--empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+            <circle cx="12" cy="8" r="3.5" />
+            <path d="M4.5 20c1.4-3.6 4.4-5.5 7.5-5.5s6.1 1.9 7.5 5.5" />
+          </svg>
+        </span>
       </NavLink>
     );
   }
@@ -44,6 +49,7 @@ export default function AccountMenu() {
         aria-label="Account menu"
       >
         <span className="navbar-account-avatar">{initials}</span>
+        <span className="navbar-account-first-name">{user.firstName}</span>
       </button>
 
       <div className={`navbar-account-dropdown glass ${isOpen ? 'is-open' : ''}`}>

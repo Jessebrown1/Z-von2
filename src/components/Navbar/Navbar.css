@@ -59,10 +59,13 @@
 
 .navbar-cart-btn {
   position: relative;
-  font-size: var(--fs-small);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
+  display: flex;
   color: var(--text-primary);
+}
+
+.navbar-cart-btn svg {
+  width: 20px;
+  height: 20px;
 }
 
 .navbar-cart-count {
@@ -82,10 +85,7 @@
 }
 
 .navbar-account-link {
-  font-size: var(--fs-small);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  color: var(--text-primary);
+  display: flex;
 }
 
 .navbar-account {
@@ -94,11 +94,14 @@
 
 .navbar-account-btn {
   display: flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .navbar-account-avatar {
   width: 30px;
   height: 30px;
+  flex-shrink: 0;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -107,6 +110,30 @@
   letter-spacing: var(--tracking-normal);
   color: var(--color-black);
   background: linear-gradient(155deg, var(--accent-bright), var(--accent));
+}
+
+.navbar-account-avatar--empty {
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--glass-border);
+  transition: border-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+}
+
+.navbar-account-avatar--empty svg {
+  width: 18px;
+  height: 18px;
+}
+
+.navbar-account-link:hover .navbar-account-avatar--empty {
+  color: var(--accent);
+  border-color: var(--glass-border-gold);
+}
+
+.navbar-account-first-name {
+  font-size: var(--fs-small);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-primary);
 }
 
 .navbar-account-dropdown.glass {
@@ -237,129 +264,6 @@
   transform: scale(1.3);
 }
 
-/* ---- Search ---- */
-.navbar-search {
-  position: relative;
-}
-
-.navbar-search-btn {
-  display: flex;
-  color: var(--text-primary);
-}
-
-.navbar-search-btn svg {
-  width: 18px;
-  height: 18px;
-}
-
-.navbar-search-panel.glass {
-  /* Higher specificity than .glass's own `position: relative` (both are
-     single-class rules, so source order would otherwise decide the tie). */
-  position: absolute;
-  top: calc(100% + 14px);
-  left: 50%;
-  transform: translate(-50%, -8px);
-  width: min(360px, 90vw);
-  padding: var(--space-3);
-  border-radius: var(--radius-md);
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity var(--duration-base) var(--ease-out), transform var(--duration-base) var(--ease-out),
-    visibility var(--duration-base) var(--ease-out);
-}
-
-.navbar-search-panel.is-open {
-  opacity: 1;
-  visibility: visible;
-  transform: translate(-50%, 0);
-}
-
-.navbar-search-panel input {
-  width: 100%;
-  background: var(--bg-surface);
-  border: var(--border-hairline);
-  padding: var(--space-3) var(--space-4);
-  color: var(--text-primary);
-  font-size: var(--fs-small);
-  border-radius: var(--radius-sm);
-}
-
-.navbar-search-results {
-  margin-top: var(--space-3);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.navbar-search-result {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-2);
-  border-radius: var(--radius-sm);
-  transition: background var(--duration-fast) var(--ease-out);
-}
-
-.navbar-search-result:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.navbar-search-result img {
-  width: 36px;
-  height: 44px;
-  object-fit: cover;
-  background: var(--bg-surface);
-  flex-shrink: 0;
-}
-
-.navbar-search-result p {
-  font-size: var(--fs-small);
-  color: var(--text-primary);
-}
-
-.navbar-search-result span {
-  font-size: var(--fs-micro);
-  color: var(--text-secondary);
-}
-
-.navbar-search-empty {
-  padding: var(--space-3) var(--space-2);
-  font-size: var(--fs-small);
-  color: var(--text-secondary);
-}
-
-.navbar-search-ask-ai {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
-  padding: var(--space-3);
-  border-radius: var(--radius-sm);
-  border-top: var(--border-hairline);
-  transition: background var(--duration-fast) var(--ease-out);
-}
-
-.navbar-search-ask-ai:hover {
-  background: rgba(201, 169, 97, 0.08);
-}
-
-.navbar-search-ask-ai-label {
-  font-size: var(--fs-micro);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
-.navbar-search-ask-ai-query {
-  font-size: var(--fs-micro);
-  color: var(--text-secondary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 180px;
-}
-
 @media (max-width: 768px) {
   .navbar-links--desktop {
     display: none;
@@ -367,10 +271,6 @@
 
   .navbar-account,
   .navbar-account-link {
-    display: none;
-  }
-
-  .navbar-search {
     display: none;
   }
 

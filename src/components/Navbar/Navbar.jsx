@@ -5,7 +5,6 @@ import { useAuth } from '../../context/AuthContext';
 import { CartDrawer } from '../Cart';
 import ThemeToggle from '../ThemeToggle';
 import AccountMenu from './AccountMenu';
-import SearchBar from './SearchBar';
 import './Navbar.css';
 
 const NAV_LINKS = [
@@ -55,7 +54,6 @@ export default function Navbar() {
         </nav>
 
         <div className="navbar-actions">
-          <SearchBar />
           <ThemeToggle className="navbar-theme-toggle" />
           <AccountMenu />
 
@@ -66,7 +64,10 @@ export default function Navbar() {
               onClick={() => setIsCartOpen(true)}
               aria-label={`Open cart, ${itemCount} items`}
             >
-              Cart
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                <path d="M6 8h12l-1 12.5a1.5 1.5 0 0 1-1.5 1.5h-7a1.5 1.5 0 0 1-1.5-1.5L6 8z" />
+                <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+              </svg>
               {itemCount > 0 && <span className="navbar-cart-count">{itemCount}</span>}
             </button>
           )}
