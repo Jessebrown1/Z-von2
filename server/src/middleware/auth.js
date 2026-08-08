@@ -39,7 +39,12 @@ export function clearSessionCookie(res) {
 }
 
 function readUserId(req) {
-  const token = req.cookies?.[COOKIE_NAME];
+  // Bearer header takes priority — Safari's ITP can silently drop the
+  // cross-site SameSite=None cookie between the Vercel frontend and this
+  // Render backend, so the client also sends the token explicitly.
+  const authHeader = req.headers.authorization;
+  const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+  const token = bearerToken || req.cookies?.[COOKIE_NAME];
   if (!token) return null;
   try {
     const payload = jwt.verify(token, getJwtSecret());

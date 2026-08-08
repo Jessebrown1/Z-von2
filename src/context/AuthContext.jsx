@@ -6,6 +6,7 @@ import {
   logout as logoutRequest,
   fetchCurrentUser,
 } from '../utils/authApi';
+import { setToken, clearToken } from '../utils/authToken';
 
 const AuthContext = createContext(null);
 
@@ -26,22 +27,26 @@ export function AuthProvider({ children }) {
       isAuthenticated: Boolean(user),
       isLoading,
       signup: async (payload) => {
-        const { user } = await signupRequest(payload);
+        const { user, token } = await signupRequest(payload);
+        setToken(token);
         setUser(user);
         return user;
       },
       login: async (payload) => {
-        const { user } = await loginRequest(payload);
+        const { user, token } = await loginRequest(payload);
+        setToken(token);
         setUser(user);
         return user;
       },
       loginWithGoogle: async (credential) => {
-        const { user } = await loginWithGoogleRequest(credential);
+        const { user, token } = await loginWithGoogleRequest(credential);
+        setToken(token);
         setUser(user);
         return user;
       },
       logout: async () => {
         await logoutRequest();
+        clearToken();
         setUser(null);
       },
     }),

@@ -32,8 +32,9 @@ router.post('/signup', express.json(), async (req, res) => {
       phone: phone?.trim(),
     });
 
-    setSessionCookie(res, signSession(user.id));
-    res.status(201).json({ user: toPublicUser(user) });
+    const token = signSession(user.id);
+    setSessionCookie(res, token);
+    res.status(201).json({ user: toPublicUser(user), token });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -50,8 +51,9 @@ router.post('/login', express.json(), async (req, res) => {
     const valid = await bcrypt.compare(password, user.passwordHash);
     if (!valid) return res.status(401).json({ error: 'Incorrect email or password' });
 
-    setSessionCookie(res, signSession(user.id));
-    res.json({ user: toPublicUser(user) });
+    const token = signSession(user.id);
+    setSessionCookie(res, token);
+    res.json({ user: toPublicUser(user), token });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -94,8 +96,9 @@ router.post('/google', express.json(), async (req, res) => {
       });
     }
 
-    setSessionCookie(res, signSession(user.id));
-    res.json({ user: toPublicUser(user) });
+    const token = signSession(user.id);
+    setSessionCookie(res, token);
+    res.json({ user: toPublicUser(user), token });
   } catch (err) {
     res.status(401).json({ error: 'Could not verify Google sign-in' });
   }

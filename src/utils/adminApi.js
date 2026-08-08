@@ -1,4 +1,5 @@
 import { apiRequest, API_BASE_URL } from './api';
+import { getToken } from './authToken';
 
 export function fetchAllOrders() {
   return apiRequest('/api/admin/orders');
@@ -29,9 +30,11 @@ export async function uploadImage(file) {
   const formData = new FormData();
   formData.append('image', file);
 
+  const token = getToken();
   const res = await fetch(`${API_BASE_URL}/api/admin/upload`, {
     method: 'POST',
     credentials: 'include',
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
     body: formData,
   });
   const data = await res.json().catch(() => ({}));
