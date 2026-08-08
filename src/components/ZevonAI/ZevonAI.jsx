@@ -61,8 +61,10 @@ export default function ZevonAI() {
         aria-label="Open ZÉVON AI, your personal stylist"
       >
         <span className="zevon-ai-trigger-glow" aria-hidden="true" />
-        <span className="zevon-ai-trigger-dot" aria-hidden="true" />
-        <span>Ask ZÉVON</span>
+        <svg className="zevon-ai-trigger-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2.5c.6 3.2 1.4 5.3 2.6 6.4 1.1 1.2 3.2 2 6.4 2.6-3.2.6-5.3 1.4-6.4 2.6-1.2 1.1-2 3.2-2.6 6.4-.6-3.2-1.4-5.3-2.6-6.4-1.1-1.2-3.2-2-6.4-2.6 3.2-.6 5.3-1.4 6.4-2.6 1.2-1.1 2-3.2 2.6-6.4z" />
+          <path d="M19 15.5c.3 1.5.7 2.5 1.3 3.1.6.6 1.6 1 3.1 1.3-1.5.3-2.5.7-3.1 1.3-.6.6-1 1.6-1.3 3.1-.3-1.5-.7-2.5-1.3-3.1-.6-.6-1.6-1-3.1-1.3 1.5-.3 2.5-.7 3.1-1.3.6-.6 1-1.6 1.3-3.1z" />
+        </svg>
       </button>
 
       {isOpen && <div className="zevon-ai-scrim" onClick={() => setIsOpen(false)} aria-hidden="true" />}

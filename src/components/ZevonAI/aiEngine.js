@@ -18,6 +18,10 @@ import {
   CHANGE_SLOT_PATTERN,
   SLOT_ALIASES,
   GREETINGS,
+  CASUAL_GREETING_REPLIES,
+  THANKS_REPLIES,
+  IDENTITY_REPLIES,
+  FAREWELL_REPLIES,
   OUTFIT_INTROS,
   PRODUCT_INTROS,
   NO_MATCH_INTROS,
@@ -25,6 +29,15 @@ import {
   COMPLEMENT_INTROS,
   STRETCH_INTROS,
 } from './keywordData';
+
+// Matched against the whole message (not a substring), so a bare "hi" or
+// "thanks" gets a conversational reply instead of being run through the
+// product-matching pipeline — where it would find no keyword hits and fall
+// back to dumping random products.
+const GREETING_PATTERN = /^(hi+|hello+|hey+|hiya|yo|sup|howdy|greetings|good\s?(morning|afternoon|evening)|what'?s\s+up)\b[\s!.,]*(there|zevon|zévon)?[\s!.,]*$/i;
+const THANKS_PATTERN = /^(thanks|thank\s?you|thx|ty|cheers|appreciate\s?it)\b[\s!.,]*$/i;
+const IDENTITY_PATTERN = /^(who\s?are\s?you|what\s?are\s?you|what\s?can\s?you\s?do|what\s?do\s?you\s?do|how\s?does\s?this\s?work)\??[\s!.,]*$/i;
+const FAREWELL_PATTERN = /^(bye|goodbye|good\s?night|see\s?you|later)\b[\s!.,]*$/i;
 import { getMoodByTag, moods as ALL_MOODS } from '../../data/moods';
 import { occasions as ALL_OCCASIONS } from '../../data/occasions';
 
@@ -349,6 +362,19 @@ export function processMessage({ message, products, state, styleDna }) {
 
   if (currentState.outfitBuilder) {
     return respondToOutfitBuilderStep(message, currentState, products);
+  }
+
+  if (GREETING_PATTERN.test(text)) {
+    return { replyText: pick(CASUAL_GREETING_REPLIES), blocks: [], state: currentState };
+  }
+  if (THANKS_PATTERN.test(text)) {
+    return { replyText: pick(THANKS_REPLIES), blocks: [], state: currentState };
+  }
+  if (IDENTITY_PATTERN.test(text)) {
+    return { replyText: pick(IDENTITY_REPLIES), blocks: [], state: currentState };
+  }
+  if (FAREWELL_PATTERN.test(text)) {
+    return { replyText: pick(FAREWELL_REPLIES), blocks: [], state: currentState };
   }
 
   const isComparison = COMPARISON_TRIGGERS.some((kw) => text.includes(kw));

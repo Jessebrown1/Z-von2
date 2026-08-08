@@ -120,6 +120,31 @@ export const GREETINGS = [
   "Hey — I'm ZÉVON AI. Describe an occasion, a mood, or a piece you already own, and I'll build from there.",
 ];
 
+/* Small talk — matched as a standalone message (see GREETING_PATTERN etc. in
+   aiEngine.js), so these fire on a bare "hi" without hijacking real style
+   requests that merely contain the same letters (e.g. "shirt"). */
+export const CASUAL_GREETING_REPLIES = [
+  "Hey! I'm ZÉVON AI, your personal stylist. Tell me an occasion, a mood, or something you already own, and I'll take it from there.",
+  "Hi there — happy to help you find something. What's the occasion, or how do you want to feel?",
+  "Hello! Give me a vibe, an occasion, or a budget and I'll pull pieces for you.",
+];
+
+export const THANKS_REPLIES = [
+  "Anytime — let me know if you want another look.",
+  "Of course. Happy to keep going if you want more options.",
+  "You're welcome. I'm here if you need anything else.",
+];
+
+export const IDENTITY_REPLIES = [
+  "I'm ZÉVON AI, your personal stylist. I can build a full outfit, compare two pieces, or recommend by mood, occasion, or budget — just tell me what you need.",
+  "I'm your stylist here at ZÉVON. Describe a vibe, an occasion, or a piece you already own, and I'll build around it.",
+];
+
+export const FAREWELL_REPLIES = [
+  "Take care — come back anytime you need a look put together.",
+  "See you. I'll be here when you're ready for the next fit.",
+];
+
 export const OUTFIT_INTROS = [
   (moodLabel) => (moodLabel ? `For ${moodLabel.toLowerCase()}, I'd keep it sharp and intentional.` : "Here's a look I'd build for you."),
   (moodLabel) => (moodLabel ? `Here's a look I'd build around ${moodLabel.toLowerCase()}.` : "Here's a full look, put together."),

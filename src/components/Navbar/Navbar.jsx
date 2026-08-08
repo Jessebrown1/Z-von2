@@ -31,6 +31,8 @@ export default function Navbar() {
 
   useEffect(() => {
     document.body.style.overflow = isMenuOpen ? 'hidden' : '';
+    document.body.classList.toggle('nav-menu-open', isMenuOpen);
+    return () => document.body.classList.remove('nav-menu-open');
   }, [isMenuOpen]);
 
   return (
