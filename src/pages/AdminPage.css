@@ -58,6 +58,13 @@
   margin-bottom: var(--space-5);
 }
 
+.admin-error button {
+  margin-left: var(--space-2);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 500;
+}
+
 /* Shared field styles reused by AdminOrders/AdminProducts/ProductForm */
 .admin-field {
   display: flex;

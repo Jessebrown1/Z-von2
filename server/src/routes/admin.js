@@ -67,11 +67,26 @@ router.get('/products', async (req, res) => {
   }
 });
 
+function validateProductPayload(body) {
+  if (!body?.name || !body?.category || body?.price === undefined || body?.price === null) {
+    return 'name, category and price are required';
+  }
+  if (!Number.isFinite(Number(body.price)) || Number(body.price) < 0) {
+    return 'price must be a non-negative number';
+  }
+  if (body.editionSize != null && (!Number.isFinite(Number(body.editionSize)) || Number(body.editionSize) < 0)) {
+    return 'editionSize must be a non-negative number';
+  }
+  if (body.weightGsm != null && (!Number.isFinite(Number(body.weightGsm)) || Number(body.weightGsm) < 0)) {
+    return 'weightGsm must be a non-negative number';
+  }
+  return null;
+}
+
 router.post('/products', express.json(), async (req, res) => {
   try {
-    if (!req.body?.name || !req.body?.category || !req.body?.price) {
-      return res.status(400).json({ error: 'name, category and price are required' });
-    }
+    const validationError = validateProductPayload(req.body);
+    if (validationError) return res.status(400).json({ error: validationError });
     const product = await createProduct(req.body);
     res.status(201).json({ product });
   } catch (err) {
@@ -81,6 +96,8 @@ router.post('/products', express.json(), async (req, res) => {
 
 router.put('/products/:id', express.json(), async (req, res) => {
   try {
+    const validationError = validateProductPayload(req.body);
+    if (validationError) return res.status(400).json({ error: validationError });
     const product = await updateProduct(req.params.id, req.body || {});
     if (!product) return res.status(404).json({ error: 'Product not found' });
     res.json({ product });

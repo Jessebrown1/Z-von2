@@ -28,18 +28,28 @@ import {
   REFINEMENT_ACKS,
   COMPLEMENT_INTROS,
   STRETCH_INTROS,
+  CATEGORY_BROWSE_TRIGGERS,
+  CATALOG_BROWSE_TRIGGERS,
+  PRODUCT_DETAIL_TRIGGERS,
+  MORE_TRIGGERS,
+  CATEGORY_BROWSE_INTROS,
+  CATALOG_INTROS,
+  MORE_INTROS,
 } from './keywordData';
+import { getMoodByTag, moods as ALL_MOODS } from '../../data/moods';
+import { occasions as ALL_OCCASIONS } from '../../data/occasions';
 
 // Matched against the whole message (not a substring), so a bare "hi" or
 // "thanks" gets a conversational reply instead of being run through the
 // product-matching pipeline — where it would find no keyword hits and fall
-// back to dumping random products.
-const GREETING_PATTERN = /^(hi+|hello+|hey+|hiya|yo|sup|howdy|greetings|good\s?(morning|afternoon|evening)|what'?s\s+up)\b[\s!.,]*(there|zevon|zévon)?[\s!.,]*$/i;
+// back to dumping random products. A couple of common one-off-typo spellings
+// are folded in directly since they're short enough that fuzzy-matching a
+// whole phrase isn't worth the complexity.
+const GREETING_PATTERN =
+  /^(hi+|hii+|hello+|helo|hey+|heyy|hiya|yo|sup|howdy|greetings|goo+d\s?(morning|afternoon|evening)|what'?s\s+up)\b[\s!.,]*(there|zevon|zévon)?[\s!.,]*$/i;
 const THANKS_PATTERN = /^(thanks|thank\s?you|thx|ty|cheers|appreciate\s?it)\b[\s!.,]*$/i;
 const IDENTITY_PATTERN = /^(who\s?are\s?you|what\s?are\s?you|what\s?can\s?you\s?do|what\s?do\s?you\s?do|how\s?does\s?this\s?work)\??[\s!.,]*$/i;
 const FAREWELL_PATTERN = /^(bye|goodbye|good\s?night|see\s?you|later)\b[\s!.,]*$/i;
-import { getMoodByTag, moods as ALL_MOODS } from '../../data/moods';
-import { occasions as ALL_OCCASIONS } from '../../data/occasions';
 
 const SLOT_CATEGORIES = {
   jacket: ['Outerwear'],
@@ -57,12 +67,55 @@ function pick(bank, ...args) {
   return typeof entry === 'function' ? entry(...args) : entry;
 }
 
-/** Finds every keyword hit for a dictionary of {bucket: [phrases]}, with a soft penalty for hits preceded by a negation word. */
+function wordsOf(text) {
+  return text.split(/[^a-z']+/i).filter(Boolean);
+}
+
+/** Classic edit-distance, used only for short single-word typo tolerance below. */
+function levenshtein(a, b) {
+  if (a === b) return 0;
+  const m = a.length;
+  const n = b.length;
+  if (!m) return n;
+  if (!n) return m;
+  let prev = Array.from({ length: n + 1 }, (_, j) => j);
+  for (let i = 1; i <= m; i++) {
+    const row = [i];
+    for (let j = 1; j <= n; j++) {
+      row[j] = a[i - 1] === b[j - 1] ? prev[j - 1] : 1 + Math.min(prev[j - 1], prev[j], row[j - 1]);
+    }
+    prev = row;
+  }
+  return prev[n];
+}
+
+/** How many edits away still counts as "probably the same word" — scaled to word length so short words stay strict. */
+function fuzzyThreshold(len) {
+  if (len <= 3) return 0;
+  if (len <= 6) return 1;
+  return 2;
+}
+
+/**
+ * Finds every keyword hit for a dictionary of {bucket: [phrases]}, with a
+ * soft penalty for hits preceded by a negation word. Single-word phrases
+ * also get a typo-tolerant fallback (Levenshtein distance) so "hoodei" or
+ * "blck" still land — multi-word phrases stay exact-substring only, since
+ * fuzzy-matching whole phrases is much more prone to false positives.
+ */
 function matchDictionary(text, dictionary) {
   const scores = {};
+  const words = wordsOf(text);
   for (const [bucket, phrases] of Object.entries(dictionary)) {
     for (const phrase of phrases) {
-      const idx = text.indexOf(phrase);
+      let idx = text.indexOf(phrase);
+      if (idx === -1 && !phrase.includes(' ') && phrase.length >= 4) {
+        const threshold = fuzzyThreshold(phrase.length);
+        const hit = words.find(
+          (w) => w !== phrase && Math.abs(w.length - phrase.length) <= threshold && levenshtein(w, phrase) <= threshold
+        );
+        if (hit) idx = text.indexOf(hit);
+      }
       if (idx === -1) continue;
       const window = text.slice(Math.max(0, idx - 16), idx);
       const negated = /\b(not|n't|without|no)\s+(too\s+|very\s+|that\s+)?$/.test(window);
@@ -91,6 +144,7 @@ function scoreProduct(product, weights) {
   for (const tag of product.moodTags || []) score += (weights.mood[tag] || 0) * 2;
   for (const tag of product.occasionTags || []) score += weights.occasion[tag] || 0;
   if (weights.silhouette[product.silhouette]) score += weights.silhouette[product.silhouette];
+  if (weights.preferredCategory && product.category === weights.preferredCategory) score += 3;
   if (weights.priceCeiling && product.price > weights.priceCeiling) score -= 6;
   if (weights.preferHigherPrice) score += product.price / 2000;
   else if (weights.preferLowerPrice) score -= product.price / 2000;
@@ -126,7 +180,10 @@ function outfitTotal(outfit) {
   return Object.values(outfit).reduce((sum, p) => sum + (p?.price || 0), 0);
 }
 
-function weightsFromMoods(moodScores, { occasionScores = {}, silhouetteScores = {}, priceCeiling, preferHigherPrice, preferLowerPrice } = {}) {
+function weightsFromMoods(
+  moodScores,
+  { occasionScores = {}, silhouetteScores = {}, priceCeiling, preferHigherPrice, preferLowerPrice, preferredCategory } = {}
+) {
   return {
     mood: moodScores,
     occasion: occasionScores,
@@ -134,6 +191,7 @@ function weightsFromMoods(moodScores, { occasionScores = {}, silhouetteScores = 
     priceCeiling: priceCeiling || null,
     preferHigherPrice: Boolean(preferHigherPrice),
     preferLowerPrice: Boolean(preferLowerPrice),
+    preferredCategory: preferredCategory || null,
   };
 }
 
@@ -167,6 +225,42 @@ function findReferencedOwnedItem(text, products) {
     if (colorMatch) return colorMatch;
   }
   return candidates[0];
+}
+
+function buildCategoryBrowseResponse(category, products, state, { preferLowerPrice, preferHigherPrice } = {}) {
+  const matches = products.filter((p) => p.category === category);
+  if (preferLowerPrice) matches.sort((a, b) => a.price - b.price);
+  else if (preferHigherPrice) matches.sort((a, b) => b.price - a.price);
+  const items = matches.slice(0, 6);
+  return {
+    replyText: pick(CATEGORY_BROWSE_INTROS, category),
+    blocks: [{ type: 'products', items }],
+    state: { ...state, lastShownProducts: items },
+  };
+}
+
+function buildCatalogBrowseResponse(products, state) {
+  const byCategory = new Map();
+  for (const product of products) {
+    if (!byCategory.has(product.category)) byCategory.set(product.category, []);
+    byCategory.get(product.category).push(product);
+  }
+  const items = [...byCategory.values()].map((group) => group[0]).slice(0, 6);
+  return {
+    replyText: pick(CATALOG_INTROS),
+    blocks: [{ type: 'products', items }],
+    state: { ...state, lastShownProducts: items },
+  };
+}
+
+function buildProductDetailResponse(product, state) {
+  const details = (product.details || []).slice(0, 4).join(' • ');
+  const replyText = details ? `${product.description} ${details}.` : product.description;
+  return {
+    replyText,
+    blocks: [{ type: 'products', items: [product] }],
+    state: { ...state, lastShownProducts: [product] },
+  };
 }
 
 export function createConversationState() {
@@ -377,6 +471,53 @@ export function processMessage({ message, products, state, styleDna }) {
     return { replyText: pick(FAREWELL_REPLIES), blocks: [], state: currentState };
   }
 
+  const isProductDetail = PRODUCT_DETAIL_TRIGGERS.some((kw) => text.includes(kw));
+  if (isProductDetail) {
+    const mentioned = findMentionedProducts(text, products);
+    const target = mentioned[0] || currentState.lastShownProducts[0] || Object.values(currentState.lastOutfit || {})[0];
+    if (target) return buildProductDetailResponse(target, currentState);
+  }
+
+  const isMore = MORE_TRIGGERS.some((kw) => text.includes(kw));
+  if (isMore && (currentState.lastShownProducts.length || currentState.lastOutfit)) {
+    const weights = weightsFromMoods(currentState.lastMoodScores, {
+      occasionScores: currentState.lastOccasionScores,
+      priceCeiling: currentState.priceCeiling,
+    });
+    const ranked = rankProducts(products, weights, { exclude: currentState.lastShownProducts });
+    const items = ranked.slice(0, 4).map((r) => r.product);
+    if (items.length) {
+      return {
+        replyText: pick(MORE_INTROS),
+        blocks: [{ type: 'products', items }],
+        state: { ...currentState, lastShownProducts: [...currentState.lastShownProducts, ...items] },
+      };
+    }
+    return {
+      replyText: "That's everything that matches so far — try a different mood, occasion, or budget and I'll pull more.",
+      blocks: [],
+      state: currentState,
+    };
+  }
+
+  const isCatalogBrowse = CATALOG_BROWSE_TRIGGERS.some((kw) => text.includes(kw));
+  if (isCatalogBrowse) {
+    return buildCatalogBrowseResponse(products, currentState);
+  }
+
+  const categoryBrowseHit = topBucket(matchDictionary(text, CATEGORY_KEYWORDS));
+  if (categoryBrowseHit) {
+    const hasMoodOrOccasion =
+      topBucket(matchDictionary(text, MOOD_KEYWORDS)) || topBucket(matchDictionary(text, OCCASION_KEYWORDS));
+    const hasBrowseVerb = CATEGORY_BROWSE_TRIGGERS.some((kw) => text.includes(kw));
+    const isShortMention = text.split(/\s+/).filter(Boolean).length <= 4;
+    if (!hasMoodOrOccasion && (hasBrowseVerb || isShortMention)) {
+      const preferLowerPrice = PRICE_KEYWORDS.cheaper.some((kw) => text.includes(kw));
+      const preferHigherPrice = PRICE_KEYWORDS.expensive.some((kw) => text.includes(kw));
+      return buildCategoryBrowseResponse(categoryBrowseHit, products, currentState, { preferLowerPrice, preferHigherPrice });
+    }
+  }
+
   const isComparison = COMPARISON_TRIGGERS.some((kw) => text.includes(kw));
   if (isComparison) {
     return buildComparisonResponse(text, currentState, products, styleDna);
@@ -431,6 +572,7 @@ export function processMessage({ message, products, state, styleDna }) {
   const priceCeiling = extractPriceCeiling(text);
   const preferLowerPrice = PRICE_KEYWORDS.cheaper.some((kw) => text.includes(kw));
   const preferHigherPrice = PRICE_KEYWORDS.expensive.some((kw) => text.includes(kw));
+  const preferredCategory = topBucket(matchDictionary(text, CATEGORY_KEYWORDS));
 
   const weights = weightsFromMoods(moodScores, {
     occasionScores,
@@ -438,10 +580,12 @@ export function processMessage({ message, products, state, styleDna }) {
     priceCeiling,
     preferHigherPrice,
     preferLowerPrice,
+    preferredCategory,
   });
 
   const ranked = rankProducts(products, weights);
-  const hasSignal = topBucket(moodScores) || topBucket(occasionScores) || topBucket(silhouetteScores) || priceCeiling;
+  const hasSignal =
+    topBucket(moodScores) || topBucket(occasionScores) || topBucket(silhouetteScores) || priceCeiling || preferredCategory;
   const items = (hasSignal ? ranked.filter((r) => r.score > 0) : ranked).slice(0, 4).map((r) => r.product);
   const finalItems = items.length ? items : ranked.slice(0, 4).map((r) => r.product);
 

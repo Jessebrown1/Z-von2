@@ -81,12 +81,15 @@ export default function ProductForm({ product, onSaved, onCancel }) {
     setError(null);
     setIsUploading(true);
     try {
-      for (const file of files) {
-        const { url } = await uploadImage(file);
-        setForm((prev) => ({ ...prev, images: [...prev.images, url] }));
-      }
-    } catch (err) {
-      setError(err.message || 'Image upload failed.');
+      const results = await Promise.allSettled(files.map((file) => uploadImage(file)));
+      const uploaded = [];
+      const failed = [];
+      results.forEach((result, i) => {
+        if (result.status === 'fulfilled') uploaded.push(result.value.url);
+        else failed.push(files[i].name);
+      });
+      if (uploaded.length) setForm((prev) => ({ ...prev, images: [...prev.images, ...uploaded] }));
+      if (failed.length) setError(`Failed to upload: ${failed.join(', ')}`);
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -103,6 +106,18 @@ export default function ProductForm({ product, onSaved, onCancel }) {
 
     if (!form.name.trim() || !form.price) {
       setError('Name and price are required.');
+      return;
+    }
+    if (!Number.isFinite(Number(form.price)) || Number(form.price) < 0) {
+      setError('Price must be a non-negative number.');
+      return;
+    }
+    if (form.editionSize && (!Number.isFinite(Number(form.editionSize)) || Number(form.editionSize) < 0)) {
+      setError('Edition size must be a non-negative number.');
+      return;
+    }
+    if (form.weightGsm && (!Number.isFinite(Number(form.weightGsm)) || Number(form.weightGsm) < 0)) {
+      setError('Weight (GSM) must be a non-negative number.');
       return;
     }
 

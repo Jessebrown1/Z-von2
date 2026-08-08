@@ -5,13 +5,44 @@
 */
 
 export const MOOD_KEYWORDS = {
-  dark: ['dark', 'black', 'shadow', 'shadowy', 'moody', 'blacked out'],
-  minimal: ['minimal', 'minimalist', 'clean', 'simple', 'understated', 'plain', 'pared back', 'pared-back'],
-  rebellious: ['rebellious', 'rebel', 'edgy', 'punk', 'defiant', 'anti'],
-  elegant: ['elegant', 'classy', 'refined', 'sophisticated', 'polished', 'sharp'],
-  night: ['night', 'evening', 'after dark', 'late night', 'nighttime'],
-  raw: ['raw', 'rugged', 'unfinished', 'industrial', 'utility', 'gritty'],
-  confident: ['confident', 'bold', 'statement', 'loud', 'powerful', 'commanding'],
+  dark: ['dark', 'black', 'shadow', 'shadowy', 'moody', 'blacked out', 'noir', 'darker'],
+  minimal: [
+    'minimal',
+    'minimalist',
+    'clean',
+    'simple',
+    'understated',
+    'plain',
+    'pared back',
+    'pared-back',
+    'basic',
+    'no frills',
+  ],
+  rebellious: ['rebellious', 'rebel', 'edgy', 'punk', 'defiant', 'anti', 'grunge', 'rough'],
+  elegant: [
+    'elegant',
+    'classy',
+    'refined',
+    'sophisticated',
+    'polished',
+    'sharp',
+    'dapper',
+    'smart',
+    'formal',
+  ],
+  night: ['night', 'evening', 'after dark', 'late night', 'nighttime', 'nocturnal'],
+  raw: ['raw', 'rugged', 'unfinished', 'industrial', 'utility', 'gritty', 'tough', 'workwear'],
+  confident: [
+    'confident',
+    'bold',
+    'statement',
+    'loud',
+    'powerful',
+    'commanding',
+    'strong',
+    'fearless',
+    'standout',
+  ],
   'quiet-luxury': [
     'quiet luxury',
     'expensive',
@@ -21,41 +52,56 @@ export const MOOD_KEYWORDS = {
     'lowkey',
     'understated luxury',
     'rich',
+    'premium',
+    'high end',
+    'high-end',
+    'classy but subtle',
   ],
 };
 
 export const OCCASION_KEYWORDS = {
-  'date-night': ['date night', 'date', 'romantic'],
-  party: ['party', 'club', 'rave', 'night out', 'going out'],
-  casual: ['casual', 'everyday wear', 'chill', 'hang out', 'hangout'],
-  dinner: ['dinner', 'restaurant'],
-  event: ['event', 'launch', 'gala', 'show', 'opening'],
-  everyday: ['everyday', 'daily', 'day to day', 'day-to-day'],
-  'just-because': ['just because', 'no reason', 'treat myself'],
+  'date-night': ['date night', 'date', 'romantic', 'first date'],
+  party: ['party', 'club', 'rave', 'night out', 'going out', 'clubbing', 'lit night'],
+  casual: [
+    'casual',
+    'everyday wear',
+    'chill',
+    'hang out',
+    'hangout',
+    'weekend',
+    'errands',
+    'relaxing',
+  ],
+  dinner: ['dinner', 'restaurant', 'brunch', 'lunch'],
+  event: ['event', 'launch', 'gala', 'fashion show', 'opening', 'red carpet', 'premiere'],
+  everyday: ['everyday', 'daily', 'day to day', 'day-to-day', 'work', 'office', 'school'],
+  'just-because': ['just because', 'no reason', 'treat myself', 'spoil myself'],
+  travel: ['travel', 'flight', 'airport', 'trip', 'vacation', 'holiday'],
 };
 
 // First match wins per silhouette bucket — order matters slightly less than
 // coverage here since aiEngine applies negation scoring on top of this.
 export const SILHOUETTE_KEYWORDS = {
-  oversized: ['oversized', 'baggy', 'boxy', 'roomy'],
-  fitted: ['fitted', 'slim', 'tight', 'close-fitting', 'close fitting'],
-  tailored: ['tailored', 'structured'],
-  relaxed: ['relaxed', 'comfortable', 'comfy', 'easy'],
-  streamlined: ['streamlined', 'sleek'],
-  tapered: ['tapered'],
+  oversized: ['oversized', 'baggy', 'boxy', 'roomy', 'loose', 'big'],
+  fitted: ['fitted', 'slim', 'tight', 'close-fitting', 'close fitting', 'snug', 'skinny'],
+  tailored: ['tailored', 'structured', 'sharp cut', 'crisp'],
+  relaxed: ['relaxed', 'comfortable', 'comfy', 'easy', 'laid back', 'laid-back'],
+  streamlined: ['streamlined', 'sleek', 'lean'],
+  tapered: ['tapered', 'narrow at the ankle'],
 };
 
 // Category keywords used both for silhouette-triggered swaps ("change the
-// jacket") and for parsing "what would go with my black hoodie."
+// jacket"), for parsing "what would go with my black hoodie," and for direct
+// category browsing ("show me hoodies").
 export const CATEGORY_KEYWORDS = {
-  Outerwear: ['jacket', 'coat', 'outerwear', 'shell'],
-  Hoodies: ['hoodie', 'hood'],
-  'T-Shirts': ['tee', 't-shirt', 'tshirt', 'shirt', 'top'],
-  Bottoms: ['pants', 'trousers', 'cargo', 'bottoms', 'jeans'],
-  Accessories: ['cap', 'hat', 'ring', 'accessory', 'accessories'],
+  Outerwear: ['jacket', 'coat', 'outerwear', 'shell', 'parka', 'windbreaker', 'blazer'],
+  Hoodies: ['hoodie', 'hood', 'hoodies', 'sweatshirt', 'pullover'],
+  'T-Shirts': ['tee', 't-shirt', 'tshirt', 'shirt', 'top', 'tees', 't-shirts', 'shirts'],
+  Bottoms: ['pants', 'trousers', 'cargo', 'bottoms', 'jeans', 'sweatpants', 'joggers', 'shorts'],
+  Accessories: ['cap', 'hat', 'ring', 'accessory', 'accessories', 'beanie', 'jewelry', 'jewellery'],
 };
 
-export const COLOR_KEYWORDS = ['black', 'gold', 'off-white', 'white', 'gunmetal'];
+export const COLOR_KEYWORDS = ['black', 'gold', 'off-white', 'white', 'gunmetal', 'grey', 'gray', 'cream'];
 
 export const OUTFIT_TRIGGERS = [
   'build me a fit',
@@ -93,11 +139,85 @@ export const STRETCH_TRIGGERS = [
 ];
 
 export const PRICE_KEYWORDS = {
-  cheaper: ['cheaper', 'less expensive', 'budget', 'affordable', 'lower price'],
+  cheaper: ['cheaper', 'less expensive', 'budget', 'affordable', 'lower price', 'cheap'],
   expensive: ['expensive', 'premium', 'splurge', 'higher end', 'high end'],
 };
 
 export const REFINEMENT_MOOD_BOOST = ['more', 'darker', 'more minimal', 'more elegant', 'more rebellious'];
+
+// "Show me hoodies" / "do you have jackets" — direct category browsing,
+// distinct from the mood/occasion-scored recommendation path.
+export const CATEGORY_BROWSE_TRIGGERS = [
+  'show me',
+  'do you have',
+  'got any',
+  'have any',
+  'what do you have in',
+  'see your',
+  'browse',
+  'looking for',
+];
+
+// "What do you have" / "show me everything" — browse the whole catalog.
+export const CATALOG_BROWSE_TRIGGERS = [
+  'everything',
+  'entire collection',
+  'whole collection',
+  'full collection',
+  'all your products',
+  'all your pieces',
+  'all your items',
+  'what do you have',
+  'what do you sell',
+  "what's in stock",
+  'whats in stock',
+  'browse the collection',
+  'see the collection',
+  'show me the collection',
+  'show me everything',
+];
+
+// "Tell me about the shadow hoodie" / "what's it made of" — a specific
+// product's description and details, rather than a recommendation list.
+export const PRODUCT_DETAIL_TRIGGERS = [
+  'tell me about',
+  'details on',
+  'more about',
+  'what is it made of',
+  "what's it made of",
+  'what is that made of',
+  'material',
+  'fabric',
+  'what sizes',
+  'tell me more',
+  'more details',
+  'more info',
+];
+
+// "Show me more" / "anything else" — re-roll the last set of
+// recommendations, excluding what's already been shown.
+export const MORE_TRIGGERS = [
+  'show me more',
+  'more options',
+  'other options',
+  'anything else',
+  'what else',
+  'something else',
+  'more like this',
+  'more choices',
+];
+
+export const CATEGORY_BROWSE_INTROS = [
+  (category) => `Here's what we have in ${category}.`,
+  (category) => `Everything currently in ${category}:`,
+];
+
+export const CATALOG_INTROS = [
+  'Here’s a spread across the collection.',
+  'A look across everything we carry right now.',
+];
+
+export const MORE_INTROS = ['A few more worth a look.', 'Here are some others.', 'More from the collection.'];
 
 export const CHANGE_SLOT_PATTERN = /change the (jacket|top|hoodie|tee|shirt|bottom|pants|trousers|accessory|cap|ring)/;
 

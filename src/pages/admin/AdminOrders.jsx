@@ -9,6 +9,9 @@ const STATUS_LABELS = { pending: 'Pending', paid: 'Paid', completed: 'Completed'
 // What an order can move to next, from its current status.
 const NEXT_STATUS = { paid: 'completed', completed: null, pending: null, cancelled: null };
 
+// Orders in these statuses can still be cancelled from the dashboard.
+const CANCELLABLE_STATUSES = new Set(['pending', 'paid']);
+
 function formatDate(iso) {
   return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 }
@@ -16,13 +19,15 @@ function formatDate(iso) {
 export default function AdminOrders() {
   const { getProductById } = useProducts();
   const [orders, setOrders] = useState(null);
-  const [error, setError] = useState(null);
+  const [loadError, setLoadError] = useState(null);
+  const [actionError, setActionError] = useState(null);
   const [updatingRef, setUpdatingRef] = useState(null);
 
   const load = () => {
+    setLoadError(null);
     fetchAllOrders()
       .then(({ orders }) => setOrders(orders))
-      .catch((err) => setError(err.message || 'Could not load orders.'));
+      .catch((err) => setLoadError(err.message || 'Could not load orders.'));
   };
 
   useEffect(load, []);
@@ -31,17 +36,38 @@ export default function AdminOrders() {
     const next = NEXT_STATUS[order.status];
     if (!next) return;
     setUpdatingRef(order.reference);
+    setActionError(null);
     try {
       await setOrderStatus(order.reference, next);
       load();
     } catch (err) {
-      setError(err.message || 'Could not update order status.');
+      setActionError(err.message || 'Could not update order status.');
     } finally {
       setUpdatingRef(null);
     }
   };
 
-  if (error) return <p className="admin-error">{error}</p>;
+  const handleCancel = async (order) => {
+    if (!window.confirm(`Cancel order ${order.reference}? This can't be undone.`)) return;
+    setUpdatingRef(order.reference);
+    setActionError(null);
+    try {
+      await setOrderStatus(order.reference, 'cancelled');
+      load();
+    } catch (err) {
+      setActionError(err.message || 'Could not cancel order.');
+    } finally {
+      setUpdatingRef(null);
+    }
+  };
+
+  if (loadError) {
+    return (
+      <p className="admin-error">
+        {loadError} <button type="button" onClick={load}>Retry</button>
+      </p>
+    );
+  }
   if (!orders) return <p className="admin-loading">Loading orders…</p>;
   if (orders.length === 0) return <p className="admin-empty">No orders yet.</p>;
 
@@ -49,6 +75,8 @@ export default function AdminOrders() {
 
   return (
     <div className="admin-orders">
+      {actionError && <p className="admin-error">{actionError}</p>}
+
       <div className="admin-orders-summary">
         {Object.entries(STATUS_LABELS).map(([status, label]) => (
           <div className="admin-stat glass" key={status}>
@@ -91,6 +119,16 @@ export default function AdminOrders() {
                     onClick={() => handleAdvance(order)}
                   >
                     {updatingRef === order.reference ? 'Updating…' : `Mark ${STATUS_LABELS[next]}`}
+                  </button>
+                )}
+                {CANCELLABLE_STATUSES.has(order.status) && (
+                  <button
+                    type="button"
+                    className="admin-order-cancel"
+                    disabled={updatingRef === order.reference}
+                    onClick={() => handleCancel(order)}
+                  >
+                    Cancel
                   </button>
                 )}
               </div>

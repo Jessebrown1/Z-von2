@@ -51,15 +51,24 @@ export default function AdminOverview() {
   const [orders, setOrders] = useState(null);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  const load = () => {
+    setError(null);
     fetchAllOrders()
       .then(({ orders }) => setOrders(orders))
       .catch((err) => setError(err.message || 'Could not load sales data.'));
-  }, []);
+  };
+
+  useEffect(load, []);
 
   const stats = useMemo(() => (orders ? buildStats(orders) : null), [orders]);
 
-  if (error) return <p className="admin-error">{error}</p>;
+  if (error) {
+    return (
+      <p className="admin-error">
+        {error} <button type="button" onClick={load}>Retry</button>
+      </p>
+    );
+  }
   if (!stats) return <p className="admin-loading">Loading sales data…</p>;
 
   const maxTrend = Math.max(1, ...stats.trend.map((t) => t.amount));
@@ -97,7 +106,11 @@ export default function AdminOverview() {
                   className="admin-trend-bar"
                   style={{ height: `${Math.max(4, (point.amount / maxTrend) * 100)}%` }}
                   title={formatPrice(point.amount / 100, stats.currency)}
-                />
+                >
+                  <span className="visually-hidden">
+                    {formatDay(point.day)}: {formatPrice(point.amount / 100, stats.currency)}
+                  </span>
+                </div>
                 <span className="admin-trend-label">{formatDay(point.day)}</span>
               </div>
             ))}
