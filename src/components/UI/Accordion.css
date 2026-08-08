@@ -1,0 +1,63 @@
+.accordion {
+  border-top: var(--border-hairline);
+}
+
+.accordion:last-child {
+  border-bottom: var(--border-hairline);
+}
+
+.accordion-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) 0;
+  font-size: var(--fs-small);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-primary);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.accordion-trigger:hover {
+  color: var(--accent);
+}
+
+.accordion-trigger svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--accent);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.accordion-plus-v {
+  transition: opacity var(--duration-fast) var(--ease-out);
+  transform-origin: center;
+}
+
+.accordion.is-open .accordion-trigger svg {
+  transform: rotate(180deg);
+}
+
+.accordion.is-open .accordion-plus-v {
+  opacity: 0;
+}
+
+.accordion-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--duration-base) var(--ease-out);
+}
+
+.accordion.is-open .accordion-panel {
+  grid-template-rows: 1fr;
+}
+
+.accordion-panel-inner {
+  overflow: hidden;
+}
+
+.accordion-panel-inner > * {
+  padding-bottom: var(--space-5);
+}

@@ -119,6 +119,20 @@ export async function getAllOrders() {
   return rows.map(deserialize);
 }
 
+// Powers the "X of Y remaining" urgency messaging on limited-edition product
+// pages — same definition of "sold" as the admin overview's stock panel
+// (paid or completed orders only; a pending/cancelled order never held stock).
+export async function getSoldCounts() {
+  const { rows } = await db.execute(`SELECT items FROM orders WHERE status IN ('paid', 'completed')`);
+  const counts = new Map();
+  for (const row of rows) {
+    for (const line of JSON.parse(row.items)) {
+      counts.set(line.id, (counts.get(line.id) || 0) + (Number(line.quantity) || 0));
+    }
+  }
+  return counts;
+}
+
 export async function setOrderStatus(reference, status, note) {
   if (!ORDER_STATUSES.includes(status)) throw new Error(`Invalid status: ${status}`);
   const existing = await getOrder(reference);
