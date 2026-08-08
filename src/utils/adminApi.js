@@ -33,7 +33,7 @@ export async function uploadImage(file) {
   const token = getToken();
   const res = await fetch(`${API_BASE_URL}/api/admin/upload`, {
     method: 'POST',
-    credentials: 'include',
+    credentials: API_BASE_URL ? 'omit' : 'include',
     headers: token ? { Authorization: `Bearer ${token}` } : undefined,
     body: formData,
   });
