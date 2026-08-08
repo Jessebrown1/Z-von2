@@ -7,19 +7,20 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 28px var(--gutter);
-  background: transparent;
-  transition: background var(--duration-base) var(--ease-out), padding var(--duration-base) var(--ease-out),
-    backdrop-filter var(--duration-base) var(--ease-out);
-}
-
-.navbar.is-scrolled {
+  padding: 22px var(--gutter);
   background: var(--glass-bg);
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
   backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-  padding-top: 18px;
-  padding-bottom: 18px;
   border-bottom: 1px solid var(--glass-border);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset;
+  transition: background var(--duration-base) var(--ease-out), padding var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
+.navbar.is-scrolled {
+  background: var(--glass-bg-strong);
+  padding-top: 16px;
+  padding-bottom: 16px;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset, 0 12px 32px rgba(0, 0, 0, 0.35);
 }
 
@@ -219,7 +220,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-6);
+  gap: var(--space-5);
   padding: var(--space-9) 0;
   overflow-y: auto;
   opacity: 0;
@@ -237,7 +238,7 @@
 
 .navbar-mobile-menu a {
   font-family: var(--font-serif);
-  font-size: 32px;
+  font-size: clamp(22px, 6vw, 26px);
   color: var(--text-primary);
 }
 
@@ -257,7 +258,7 @@
 
 .navbar-mobile-menu button.navbar-mobile-logout {
   font-family: var(--font-serif);
-  font-size: 32px;
+  font-size: clamp(22px, 6vw, 26px);
   color: var(--text-primary);
 }
 

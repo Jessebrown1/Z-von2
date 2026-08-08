@@ -1,22 +1,60 @@
 .site-footer {
+  position: relative;
   background: var(--bg-surface);
-  border-top: var(--border-hairline);
-  padding: var(--space-9) var(--gutter) var(--space-6);
+  background-image: var(--glass-bg);
+  overflow: hidden;
+  padding: var(--space-10) var(--gutter) var(--space-6);
   transition: background-color var(--duration-slow) var(--ease-out);
 }
 
+.site-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201, 169, 97, 0.5) 50%, transparent);
+}
+
+.site-footer-glow {
+  position: absolute;
+  top: -40%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60vw;
+  max-width: 700px;
+  height: 300px;
+  background: radial-gradient(ellipse at center, rgba(201, 169, 97, 0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
 .site-footer-top {
+  position: relative;
   display: grid;
   grid-template-columns: 1.4fr repeat(3, 1fr);
   gap: var(--space-6);
-  padding-bottom: var(--space-8);
+  padding-bottom: var(--space-9);
+}
+
+.site-footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
 .site-footer-mark {
   font-family: var(--font-serif);
-  font-size: 24px;
+  font-size: 28px;
   letter-spacing: var(--tracking-widest);
   color: var(--text-primary);
+  width: fit-content;
+}
+
+.site-footer-manifesto {
+  font-size: 15px;
+  font-style: italic;
+  color: var(--text-secondary);
 }
 
 .site-footer-col {
@@ -27,7 +65,7 @@
 
 .site-footer-heading {
   font-size: var(--fs-micro);
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: var(--tracking-wider);
   text-transform: uppercase;
   color: var(--accent);
   margin-bottom: var(--space-2);
@@ -36,23 +74,51 @@
 .site-footer-col a {
   font-size: var(--fs-small);
   color: var(--text-secondary);
-  transition: color var(--duration-fast) var(--ease-out);
+  transition: color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
   width: fit-content;
 }
 
 .site-footer-col a:hover {
-  color: var(--text-primary);
+  color: var(--accent-bright);
+  transform: translateX(2px);
 }
 
 .site-footer-bottom {
+  position: relative;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  padding-top: var(--space-6);
+  gap: var(--space-4);
+  /* Reserves room so the legal links never sit under the fixed ZÉVON AI
+     trigger parked in the bottom-right corner of the viewport. */
+  padding: var(--space-6) 90px var(--space-2) 0;
   border-top: var(--border-hairline);
   font-size: var(--fs-micro);
   letter-spacing: var(--tracking-normal);
   text-transform: uppercase;
   color: var(--text-secondary);
+}
+
+.site-footer-drop {
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 14px;
+  color: var(--accent);
+  font-style: italic;
+}
+
+.site-footer-legal {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.site-footer-legal a {
+  color: var(--text-secondary);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.site-footer-legal a:hover {
+  color: var(--accent-bright);
 }
 
 @media (max-width: 768px) {
@@ -61,8 +127,15 @@
     row-gap: var(--space-7);
   }
 
+  .site-footer-brand {
+    grid-column: 1 / -1;
+  }
+
   .site-footer-bottom {
     flex-direction: column;
-    gap: var(--space-2);
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding-right: 0;
+    padding-bottom: var(--space-8);
   }
 }
