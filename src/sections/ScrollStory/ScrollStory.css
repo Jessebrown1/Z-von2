@@ -1,0 +1,104 @@
+.scroll-story {
+  position: relative;
+  height: 100vh;
+  min-height: 560px;
+  overflow: hidden;
+  background: var(--bg-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scroll-story-stack {
+  position: relative;
+  width: min(74vw, 940px);
+  aspect-ratio: 16 / 9.4;
+  overflow: hidden;
+  border: 1px solid var(--glass-border-gold);
+  box-shadow: var(--shadow-lg), var(--shadow-gold-glow);
+}
+
+.scroll-story-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: opacity, transform;
+}
+
+.scroll-story-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 10vw rgba(0, 0, 0, 0.45);
+}
+
+.scroll-story-caption {
+  position: absolute;
+  left: var(--gutter);
+  bottom: var(--space-8);
+  z-index: 2;
+}
+
+.scroll-story-caption .eyebrow {
+  margin-bottom: var(--space-2);
+}
+
+.scroll-story-caption h2 {
+  font-weight: 400;
+  font-size: var(--fs-h3);
+  color: var(--text-primary);
+}
+
+.scroll-story-dots {
+  position: absolute;
+  right: var(--gutter);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.scroll-story-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--text-secondary);
+  opacity: 0.4;
+  transition: opacity var(--duration-base) var(--ease-out), transform var(--duration-base) var(--ease-out),
+    background var(--duration-base) var(--ease-out);
+}
+
+.scroll-story-dot.is-active {
+  opacity: 1;
+  background: var(--accent);
+  transform: scale(1.8);
+}
+
+@media (max-width: 768px) {
+  .scroll-story-stack {
+    width: 88vw;
+    aspect-ratio: 4 / 5;
+  }
+
+  .scroll-story-caption {
+    bottom: var(--space-6);
+  }
+
+  .scroll-story-caption h2 {
+    font-size: 24px;
+  }
+
+  .scroll-story-dots {
+    right: var(--space-3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-story-frame {
+    transition: none;
+  }
+}
