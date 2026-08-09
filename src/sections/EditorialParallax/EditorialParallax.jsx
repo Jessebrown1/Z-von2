@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { Button } from '../../components/UI';
 import { useProducts } from '../../context/ProductsContext';
 import { formatPrice } from '../../utils/helpers';
 import { gsap, useGsapContext } from '../../hooks/animationHooks';
@@ -13,19 +14,41 @@ import './EditorialParallax.css';
  */
 export default function EditorialParallax() {
   const sectionRef = useRef(null);
-  const introRef = useRef(null);
+  const heroRef = useRef(null);
   const { products } = useProducts();
   const items = products.slice(0, 4);
+  const spotlight = items.find((p) => p.isLimited) || items[0];
 
   useGsapContext(
     () => {
-      gsap.from('.editorial-parallax-reveal', {
+      // The whole image+text moment fades and rises in as it enters view,
+      // then fades and rises back out as you scroll past it — it's a beat,
+      // not a static block that just sits there once revealed.
+      gsap.fromTo(
+        '.editorial-hero-reveal',
+        { opacity: 0, y: 44 },
+        {
+          opacity: 1,
+          y: 0,
+          ease: 'none',
+          stagger: 0.06,
+          scrollTrigger: { trigger: heroRef.current, start: 'top 88%', end: 'top 55%', scrub: true },
+        }
+      );
+
+      gsap.to('.editorial-hero-reveal', {
         opacity: 0,
-        y: 28,
-        duration: 0.9,
-        stagger: 0.12,
-        ease: 'power2.out',
-        scrollTrigger: { trigger: introRef.current, start: 'top 75%' },
+        y: -44,
+        ease: 'none',
+        stagger: 0.06,
+        scrollTrigger: { trigger: heroRef.current, start: 'top 25%', end: 'top -25%', scrub: true },
+      });
+
+      gsap.to('.editorial-hero-bg', {
+        yPercent: 12,
+        scale: 1.12,
+        ease: 'none',
+        scrollTrigger: { trigger: heroRef.current, start: 'top bottom', end: 'bottom top', scrub: true },
       });
 
       gsap.utils.toArray('.editorial-3d-card').forEach((card, i) => {
@@ -62,17 +85,43 @@ export default function EditorialParallax() {
 
   return (
     <section className="section editorial-parallax" ref={sectionRef}>
-      <div className="editorial-parallax-text" ref={introRef}>
-        <p className="eyebrow editorial-parallax-reveal">No. 001</p>
-        <h2 className="serif editorial-parallax-reveal">
-          Cut once.
-          <br />
-          Never repeated.
-        </h2>
-        <p className="editorial-parallax-copy editorial-parallax-reveal">
-          Small batches, hand-finished, numbered for the one person who'll wear it. ZÉVON doesn't
-          restock — when a drop is gone, it's gone.
-        </p>
+      <div className="editorial-hero" ref={heroRef}>
+        {spotlight && (
+          <div
+            className="editorial-hero-bg"
+            style={{ backgroundImage: `url(${spotlight.images[0]})` }}
+            aria-hidden="true"
+          />
+        )}
+        <div className="editorial-hero-overlay" aria-hidden="true" />
+
+        <div className="editorial-hero-content">
+          <p className="eyebrow editorial-hero-reveal">No. 001</p>
+          <h2 className="serif editorial-hero-reveal">
+            Cut once.
+            <br />
+            Never repeated.
+          </h2>
+          <p className="editorial-hero-copy editorial-hero-reveal">
+            Small batches, hand-finished, numbered for the one person who'll wear it. ZÉVON doesn't
+            restock — when a drop is gone, it's gone.
+          </p>
+
+          {spotlight && (
+            <div className="editorial-hero-spotlight glass editorial-hero-reveal">
+              <Link to={`/product/${spotlight.slug}`} className="editorial-hero-spotlight-media">
+                <img src={spotlight.images[0]} alt={spotlight.name} />
+              </Link>
+              <div className="editorial-hero-spotlight-info">
+                <p className="serif">{spotlight.name}</p>
+                <p>{formatPrice(spotlight.price, spotlight.currency)}</p>
+                <Button to={`/product/${spotlight.slug}`} variant="glass" className="editorial-hero-cta">
+                  Shop Now
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="editorial-3d-stack">
