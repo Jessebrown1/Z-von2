@@ -1,0 +1,108 @@
+.collection-showcase {
+  position: relative;
+  background: var(--bg-primary);
+  padding: var(--space-10) var(--gutter);
+  overflow: hidden;
+}
+
+.collection-showcase-numeral {
+  position: absolute;
+  top: -4vw;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-serif);
+  font-size: clamp(180px, 30vw, 420px);
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--glass-border-gold);
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+.collection-showcase-head {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.collection-showcase-head .eyebrow {
+  margin-bottom: var(--space-4);
+}
+
+.collection-showcase-head h2 {
+  font-weight: 400;
+  font-size: var(--fs-h2);
+  color: var(--text-primary);
+}
+
+.collection-showcase-sub {
+  margin-top: var(--space-3);
+  font-size: var(--fs-body);
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.collection-showcase-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+}
+
+.collection-showcase-featured {
+  grid-column: 1 / -1;
+}
+
+.collection-showcase-featured .product-card-media {
+  aspect-ratio: 21 / 9;
+}
+
+.collection-showcase-link {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: fit-content;
+  margin: var(--space-8) auto 0;
+  font-size: var(--fs-small);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--accent);
+  border-bottom: 1px solid var(--accent-dim);
+  padding-bottom: var(--space-1);
+  transition: color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out);
+}
+
+.collection-showcase-link:hover {
+  color: var(--accent-bright);
+  border-color: var(--accent-bright);
+}
+
+@media (max-width: 1024px) {
+  .collection-showcase-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .collection-showcase-featured .product-card-media {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+@media (max-width: 480px) {
+  .collection-showcase-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-7);
+  }
+
+  .collection-showcase-featured .product-card-media {
+    aspect-ratio: 4 / 3;
+  }
+
+  .collection-showcase-numeral {
+    font-size: 160px;
+  }
+}
