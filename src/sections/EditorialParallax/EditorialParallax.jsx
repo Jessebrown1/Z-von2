@@ -3,24 +3,22 @@ import { gsap, useGsapContext } from '../../hooks/animationHooks';
 import './EditorialParallax.css';
 
 /**
- * Replaces the old scroll-scrubbed orbit-frame "video" with something far
- * lighter: a single image drifting at a different rate than the page
- * (classic editorial parallax) behind a line of brand copy that fades in
- * as it enters view. No pinning, no per-frame canvas drawing — one tween.
+ * The heading isn't printed over the photo — the photo IS the heading. The
+ * type is a mask (background-clip: text) with the same image showing
+ * through it, panning slowly as you scroll. One image, no separate
+ * full-bleed background layer, no overlay gradient to fight for contrast.
  */
 export default function EditorialParallax() {
   const sectionRef = useRef(null);
-  const imgRef = useRef(null);
+  const headingRef = useRef(null);
   const textRef = useRef(null);
 
   useGsapContext(
     () => {
-      // Background layer: drifts vertically and pushes toward the viewer
-      // (scale up) as it scrolls through — the two combined read as the
-      // image having real depth rather than being a flat photo.
-      gsap.to(imgRef.current, {
-        yPercent: 16,
-        scale: 1.12,
+      // The image panning inside the letterforms — the "camera move" that
+      // makes the mask feel alive instead of a static cutout.
+      gsap.to(headingRef.current, {
+        backgroundPosition: '0% 0%, 30% 70%',
         ease: 'none',
         scrollTrigger: {
           trigger: sectionRef.current,
@@ -30,12 +28,8 @@ export default function EditorialParallax() {
         },
       });
 
-      // Foreground layer: the text moves at a slower, opposite-leaning rate
-      // and tilts slightly on its own X axis — two layers scrolling at
-      // different speeds is what actually sells "3D" versus a flat page.
       gsap.to(textRef.current, {
-        yPercent: -8,
-        rotateX: -4,
+        yPercent: -10,
         ease: 'none',
         scrollTrigger: {
           trigger: sectionRef.current,
@@ -45,7 +39,7 @@ export default function EditorialParallax() {
         },
       });
 
-      gsap.from('.editorial-parallax-text > *', {
+      gsap.from('.editorial-parallax-reveal', {
         opacity: 0,
         y: 28,
         duration: 0.9,
@@ -60,21 +54,16 @@ export default function EditorialParallax() {
 
   return (
     <section className="section editorial-parallax" ref={sectionRef}>
-      <div className="editorial-parallax-media">
-        <img ref={imgRef} src="/hero.png" alt="" className="editorial-parallax-img" />
-        <div className="editorial-parallax-overlay" />
-      </div>
-
       <div className="editorial-parallax-text" ref={textRef}>
-        <p className="eyebrow">No. 001</p>
-        <h2 className="serif">
-          Every piece is deliberate.
+        <p className="eyebrow editorial-parallax-reveal">No. 001</p>
+        <h2 className="serif editorial-parallax-heading editorial-parallax-reveal" ref={headingRef}>
+          Cut once.
           <br />
-          Nothing is accidental.
+          Never repeated.
         </h2>
-        <p className="editorial-parallax-copy">
-          Cut in small batches, finished by hand, numbered for the one person who'll wear it —
-          this isn't fast fashion dressed up. It's the alternative to it.
+        <p className="editorial-parallax-copy editorial-parallax-reveal">
+          Small batches, hand-finished, numbered for the one person who'll wear it. ZÉVON doesn't
+          restock — when a drop is gone, it's gone.
         </p>
       </div>
     </section>

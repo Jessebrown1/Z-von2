@@ -30,6 +30,17 @@ export default function CollectionShowcase() {
         ease: 'power2.out',
         scrollTrigger: { trigger: '.collection-showcase-grid', start: 'top 85%' },
       });
+
+      gsap.to('.collection-showcase-numeral', {
+        yPercent: -12,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: true,
+        },
+      });
     },
     // Products load async — re-run once real cards exist so ScrollTrigger
     // actually has elements to attach to (see useGsapContext's cleanup for
@@ -40,14 +51,21 @@ export default function CollectionShowcase() {
 
   return (
     <section id="collection-showcase" className="section collection-showcase" ref={sectionRef}>
+      <span className="collection-showcase-numeral" aria-hidden="true">
+        01
+      </span>
+
       <div className="collection-showcase-head">
-        <p className="eyebrow">No. 001 &mdash; Fearless Collection</p>
-        <h2 className="serif">Shop the Drop.</h2>
+        <p className="eyebrow">No. 001</p>
+        <h2 className="serif">The Fearless Collection</h2>
+        <p className="collection-showcase-sub">Six pieces. One state of mind.</p>
       </div>
 
       <div className="collection-showcase-grid">
-        {featured.map((product) => (
-          <ProductCard key={product.id} product={product} />
+        {featured.map((product, i) => (
+          <div key={product.id} className={i === 0 ? 'collection-showcase-featured' : undefined}>
+            <ProductCard product={product} />
+          </div>
         ))}
       </div>
 
