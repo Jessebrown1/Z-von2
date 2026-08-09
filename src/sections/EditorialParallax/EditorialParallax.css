@@ -1,61 +1,100 @@
 .editorial-parallax {
   position: relative;
-  min-height: 92vh;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
   background: var(--bg-surface);
   padding: var(--space-10) var(--gutter);
 }
 
 .editorial-parallax-text {
-  position: relative;
-  z-index: 2;
-  max-width: 980px;
-  margin: 0 auto;
+  max-width: 640px;
+  margin: 0 auto var(--space-9);
+  text-align: center;
 }
 
-.editorial-parallax-text .eyebrow {
-  margin-bottom: var(--space-4);
-}
-
-/* The heading IS the photo — background-clip:text turns the image into the
-   letterforms' fill instead of printing type over a separate photo layer. */
-.editorial-parallax-heading {
+.editorial-parallax-text h2 {
   font-weight: 400;
-  font-size: clamp(48px, 9vw, 128px);
-  line-height: 1.02;
-  margin: 0 0 var(--space-6);
-  /* A gold gradient screened over the photo — guarantees the letterforms
-     read as bright metallic gold no matter which part of the (mostly dark)
-     photo ends up behind them, while the photo still shows through as
-     texture and movement. */
-  background-image: linear-gradient(135deg, rgba(232, 201, 138, 0.92), rgba(122, 101, 55, 0.6)), url('/hero.png');
-  background-blend-mode: screen;
-  background-size: 100% 100%, 240% auto;
-  background-position: 0% 0%, 70% 20%;
-  background-repeat: no-repeat;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  will-change: background-position;
+  font-size: var(--fs-h2);
+  color: var(--text-primary);
+  margin: var(--space-3) 0 var(--space-5);
 }
 
 .editorial-parallax-copy {
   font-size: var(--fs-body-lg);
   line-height: 1.6;
   color: var(--text-secondary);
-  max-width: 50ch;
+  max-width: 46ch;
+  margin: 0 auto;
+}
+
+/* ---- 3D scroll stack ---- */
+.editorial-3d-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-10);
+  max-width: 720px;
+  margin: 0 auto;
+  perspective: 1400px;
+}
+
+.editorial-3d-card {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+
+.editorial-3d-card-media {
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--bg-primary);
+  border: 1px solid transparent;
+  transition: border-color var(--duration-base) var(--ease-out), box-shadow var(--duration-base) var(--ease-out);
+}
+
+.editorial-3d-card:hover .editorial-3d-card-media {
+  border-color: var(--glass-border-gold);
+  box-shadow: var(--glass-shadow);
+}
+
+.editorial-3d-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+.editorial-3d-card:hover .editorial-3d-card-media img {
+  transform: scale(1.04);
+}
+
+.editorial-3d-card-caption {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-top: var(--space-4);
+}
+
+.editorial-3d-card-caption p:first-child {
+  font-size: 20px;
+  color: var(--text-primary);
+}
+
+.editorial-3d-card-caption p:last-child {
+  font-size: var(--fs-small);
+  color: var(--text-secondary);
 }
 
 @media (max-width: 720px) {
-  .editorial-parallax {
-    min-height: 80vh;
-    align-items: flex-start;
-    padding-top: calc(var(--nav-height) + var(--space-7));
+  .editorial-3d-stack {
+    perspective: 900px;
+    gap: var(--space-8);
   }
+}
 
-  .editorial-parallax-heading {
-    background-size: 320% auto;
+@media (prefers-reduced-motion: reduce) {
+  .editorial-3d-card {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
