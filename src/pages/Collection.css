@@ -25,12 +25,49 @@
   font-size: var(--fs-body);
 }
 
+.collection-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  margin-bottom: var(--space-8);
+}
+
 .collection-filters {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
   gap: var(--space-3);
-  margin-bottom: var(--space-8);
+}
+
+.collection-sort {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.collection-sort span {
+  font-size: var(--fs-small);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.collection-sort select {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--fs-small);
+  color: var(--text-primary);
+  background: var(--bg-surface);
+  border: var(--border-hairline);
+  cursor: pointer;
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.collection-sort select:hover,
+.collection-sort select:focus {
+  border-color: var(--accent);
+  outline: none;
 }
 
 .collection-filter {

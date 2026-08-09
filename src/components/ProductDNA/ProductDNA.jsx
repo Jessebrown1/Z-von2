@@ -19,15 +19,19 @@ function explainWeight(gsm, silhouette) {
 export default function ProductDNA({ product }) {
   const sectionRef = useRef(null);
 
+  // Fit/silhouette describe how a garment sits on a body — meaningless for a
+  // ring or a tote, so they're a garment-only concept, not a general one.
+  const isAccessory = product.category === 'Accessories';
+
   const metrics = [
     { label: 'Material', value: product.details?.[0] },
     { label: 'Weight', value: product.weightGsm ? `${product.weightGsm} GSM` : null },
-    { label: 'Fit', value: capitalize(product.fit) },
-    { label: 'Silhouette', value: capitalize(product.silhouette) },
+    !isAccessory && { label: 'Fit', value: capitalize(product.fit) },
+    !isAccessory && { label: 'Silhouette', value: capitalize(product.silhouette) },
     { label: 'Color', value: product.colors?.[0] },
     { label: 'Drop', value: String(product.dropNumber || 1).padStart(3, '0') },
     { label: 'Production', value: product.editionSize ? `${product.editionSize} pieces` : 'Open production' },
-  ].filter((metric) => metric.value);
+  ].filter((metric) => metric && metric.value);
 
   const weightExplainer = explainWeight(product.weightGsm, product.silhouette);
 

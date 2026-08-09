@@ -66,6 +66,7 @@ export default function ProductDetails() {
   const hasStockCount = product.isLimited && Number.isFinite(product.remaining) && product.editionSize;
   const stockRatio = hasStockCount ? product.remaining / product.editionSize : null;
   const isLowStock = hasStockCount && stockRatio <= 0.2;
+  const isAccessory = product.category === 'Accessories';
 
   const handleAddToCart = () => {
     if (!isAuthenticated) {
@@ -120,16 +121,18 @@ export default function ProductDetails() {
 
           <p className="product-details-description product-details-reveal">{product.description}</p>
 
-          <div className="product-details-perk product-details-reveal">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true">
-              <path d="M12 2c1.2 1.6 1.8 2.9 1.8 4.2 0 1.4-.8 2.3-1.8 2.3s-1.8-.9-1.8-2.3C10.2 4.9 10.8 3.6 12 2Z" />
-              <path d="M8.5 8.5h7L17 21a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1L8.5 8.5Z" />
-              <path d="M8.2 13h7.6" />
-            </svg>
-            <p>
-              Includes a complimentary <em>ZÉVON</em> Special Perfume (10ml)
-            </p>
-          </div>
+          {product.isLimited && (
+            <div className="product-details-perk product-details-reveal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true">
+                <path d="M12 2c1.2 1.6 1.8 2.9 1.8 4.2 0 1.4-.8 2.3-1.8 2.3s-1.8-.9-1.8-2.3C10.2 4.9 10.8 3.6 12 2Z" />
+                <path d="M8.5 8.5h7L17 21a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1L8.5 8.5Z" />
+                <path d="M8.2 13h7.6" />
+              </svg>
+              <p>
+                Includes a complimentary <em>ZÉVON</em> Special Perfume (10ml)
+              </p>
+            </div>
+          )}
 
           <div className="product-details-reveal">
             <SelectorGroup label="Color" options={product.colors} value={color} onChange={setColor} />
@@ -165,31 +168,33 @@ export default function ProductDetails() {
               </ul>
             </Accordion>
 
-            <Accordion title="Size Guide">
-              <p className="product-details-accordion-note">Measurements in centimeters. For a relaxed fit, size up.</p>
-              <div className="product-details-size-table-wrap">
-                <table className="product-details-size-table">
-                  <thead>
-                    <tr>
-                      <th>Size</th>
-                      <th>Chest</th>
-                      <th>Waist</th>
-                      <th>Length</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {SIZE_GUIDE_ROWS.map((row) => (
-                      <tr key={row.size} className={row.size === size ? 'is-selected' : ''}>
-                        <td>{row.size}</td>
-                        <td>{row.chest}</td>
-                        <td>{row.waist}</td>
-                        <td>{row.length}</td>
+            {!isAccessory && (
+              <Accordion title="Size Guide">
+                <p className="product-details-accordion-note">Measurements in centimeters. For a relaxed fit, size up.</p>
+                <div className="product-details-size-table-wrap">
+                  <table className="product-details-size-table">
+                    <thead>
+                      <tr>
+                        <th>Size</th>
+                        <th>Chest</th>
+                        <th>Waist</th>
+                        <th>Length</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </Accordion>
+                    </thead>
+                    <tbody>
+                      {SIZE_GUIDE_ROWS.map((row) => (
+                        <tr key={row.size} className={row.size === size ? 'is-selected' : ''}>
+                          <td>{row.size}</td>
+                          <td>{row.chest}</td>
+                          <td>{row.waist}</td>
+                          <td>{row.length}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Accordion>
+            )}
 
             <Accordion title="Shipping & Returns">
               <div className="product-details-shipping">

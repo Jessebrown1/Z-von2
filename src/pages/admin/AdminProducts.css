@@ -1,4 +1,9 @@
 .admin-products-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
   margin-bottom: var(--space-6);
 }
 
@@ -14,6 +19,38 @@
 
 .admin-add-btn:hover {
   background: var(--accent-bright);
+}
+
+.admin-products-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.admin-products-filter {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--fs-small);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  border: var(--border-hairline);
+  transition: color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out);
+}
+
+.admin-products-filter:hover {
+  color: var(--text-primary);
+}
+
+.admin-products-filter.is-active {
+  color: var(--accent-bright);
+  border-color: var(--accent);
+}
+
+.admin-products-empty {
+  color: var(--text-secondary);
+  padding: var(--space-7) 0;
+  grid-column: 1 / -1;
+  text-align: center;
 }
 
 .admin-products-grid {
