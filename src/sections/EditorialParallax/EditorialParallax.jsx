@@ -124,19 +124,7 @@ export default function EditorialParallax() {
         </div>
       </div>
 
-      <div className="editorial-3d-stack">
-        {items.map((product) => (
-          <Link to={`/product/${product.slug}`} key={product.id} className="editorial-3d-card">
-            <div className="editorial-3d-card-media">
-              <img src={product.images[0]} alt={product.name} />
-            </div>
-            <div className="editorial-3d-card-caption">
-              <p className="serif">{product.name}</p>
-              <p>{formatPrice(product.price, product.currency)}</p>
-            </div>
-          </Link>
-        ))}
-      </div>
+
     </section>
   );
 }
